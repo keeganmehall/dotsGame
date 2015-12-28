@@ -1,5 +1,4 @@
 window.onload = function(){
-16//define globals
 var calculateButton = document.getElementById('calculate');
 var resetButton = document.getElementById('reset');
 var undoButton = document.getElementById('undo');
@@ -31,16 +30,12 @@ var circleClickHandler = function(){
   var index = this.id;
   if (listOfPoints[index].type === 'end' && listOfLines.length === number - 1){
     listOfPoints[index].state = 'unconnected'
-    console.log('working')
   }
-  console.log(listOfPoints[index].state)
   if(listOfPoints[index].state === 'unconnected'){
-      
-      console.log("index of clicked point is: ", index)
       pointDescriptor = listOfPoints[index]
     var x = pointDescriptor.x
     var y = pointDescriptor.y
-      console.log(x,y)
+
 
 
       //fill the circle gray
@@ -52,7 +47,7 @@ var circleClickHandler = function(){
 
       var line = {
           svgElement:lineSVG, 
-          x2:x, //now the ending point of the line is p2 which is pointDescriptor so replace the x2 and y2 with p1:pointDescriptor
+          x2:x,
           y2:y,
           p2:pointDescriptor,
           x1:listOfLines[prevIndex].x2,
@@ -71,14 +66,12 @@ var circleClickHandler = function(){
     
     calcPathLength()
     if (listOfPoints[index].type === 'end'){
-      console.log(pathLength,'best',best, 'bool', !best);
       if (pathLength < best || isNaN(best) || !best){
-        console.log('newbestscore')
         storeBest();
         bestBar.setAttribute('y', 410-barHeight());
         bestBar.setAttribute('height', barHeight())
         if(Math.abs(pathLength-perfectLength)<0.2){
-        	console.log('error = Math.abs(pathLength-perfectLength)');
+        	console.log('error =', Math.abs(pathLength-perfectLength));
           bestBar.setAttribute('fill','green');          
           lengthBar.setAttribute('fill','green');
         }
@@ -146,10 +139,7 @@ undoButton.addEventListener('click',function(){
         lineDescriptor.p2.svgElement.setAttribute('fill','black')
         lineDescriptor.p2.state = 'unconnected'
     }
-        //pathLength -= length(lineDescriptor)
         listOfLines.pop();
-        //pathLengthString = pathLength.toString()
-        //counter.textContent = pathLengthString.split(".",1).toString()
         calcPathLength();
         updateLengthBars();
     }
@@ -215,24 +205,6 @@ var calculatePoints = function(){
     i = 0
     //add new points
     while (i<number){
-        /*
-      	//generate random position for single dot
-      	var randomx;
-      	var randomy;
-      	var genPoint = function(){
-          randomx = Math.floor((Math.random() * 20) + 1)*20;
-        	randomy = Math.floor((Math.random() * 20) + 1)*20;
-          
-          listOfPoints.forEach(function(circle){
-            
-            if (randomx === circle.x && randomy === circle.y){
-              genPoint();
-              console.log('working');
-            }
-          })
-        }
-        genPoint();
-        */
   			var randomx = pointCoordinates[i].x;
         var randomy = pointCoordinates[i].y;
   
@@ -322,15 +294,10 @@ codeInput.addEventListener('keypress', function(event){
 var storePoints = function(){
   var store = ""
   pointCoordinates.forEach(function(circle){
-    //console.log('c',circle.x.toString());
-    //var xString = (circle.x/20).toString();
-    //var yString = (circle.y/20).toString();
     var xString = String.fromCharCode(circle.x/20+96);
     var yString = String.fromCharCode(circle.y/20+96);
     store += xString
-    //store += "-"
     store += yString
-    //store += "_"
   })
   return(store)
 }
@@ -348,7 +315,6 @@ var retrieve = function(string){
     while(i < string.length){
       var xCoord = (string.charCodeAt(i)-96)*20;
       var yCoord = (string.charCodeAt(i+1)-96)*20;
-      console.log(xCoord,yCoord)
       var point = {x:xCoord, y:yCoord};
       pointCoordinates.push(point);
       i+=2
@@ -377,12 +343,10 @@ var calcBestPath = function(){
     return lengthTable  
   }
 	var lengthTable = calcLengths();
-  console.log(lengthTable);
   var startIndex = 0;
   var endIndex = 1;
   var middlePoints = (1<<(number-2))-1;
   var memo = new Float32Array((1<<(number-2)) * number).fill(-1);
-console.log('startIndex',startIndex,'endIndex',endIndex,'middlePoints',middlePoints);
   var optimalLength = function(startIndex,endIndex,middlePoints){
   	//functionCounter++;
     if(middlePoints === 0){
@@ -435,14 +399,12 @@ defaultNumInput.value = defaultNumber.toString();
 
 if(retrieve(window.location.hash.replace('#','')) === false){
 	genCoordinates();
-}else{
-	console.log(pointCoordinates);
 }
 
-//retrieve('bascmbjkdifnhdddfghjlcgh');
+
+
 window.location.hash = '#' + storePoints();
 shareCode.textContent = storePoints();
 calculatePoints();
-console.log(location);
 }
 
