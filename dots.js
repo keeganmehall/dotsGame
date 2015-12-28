@@ -3,12 +3,6 @@ var calculateButton = document.getElementById('calculate');
 var resetButton = document.getElementById('reset');
 var undoButton = document.getElementById('undo');
 var svg = document.getElementById('svg');
-var counter = document.getElementById('counter');
-var bestCounter = document.getElementById('bestCounter');
-var optimalCounter = document.getElementById('optimal');
-var shareCode = document.getElementById('shareCode');
-var retrieveButton = document.getElementById('retrieve');
-var codeInput = document.getElementById('codeInput');
 //var timer = document.getElementById('timer');
 var defaultNumInput = document.getElementById('defaultNumInput');
 var lengthBar = document.getElementById('lengthBar');
@@ -86,7 +80,6 @@ var circleClickHandler = function(){
 var storeBest = function (){
   best = calcPathLength()
   bestLengthString = Math.round(best).toString()
-	bestCounter.textContent = bestLengthString.split(".",1)
 }
 
 var calcPathLength = function(){
@@ -95,7 +88,6 @@ var calcPathLength = function(){
     pathLength += Math.sqrt(Math.pow(line.p2.x-line.p1.x,2)+Math.pow(line.p2.y-line.p1.y,2))
   })
   pathLengthString = Math.round(pathLength).toString()
-	counter.textContent = pathLengthString.split(".",1)
   return pathLength
 }
 
@@ -106,7 +98,6 @@ resetButton.addEventListener('click',function(){
 	colorPoints()
     pathLength = 0
     pathLengthString = pathLength.toString()
-	counter.textContent = pathLengthString.split(".",1)
   listOfPoints.forEach(function(circle){
     if(circle.type === 'start'){
       circle.state = 'start'
@@ -240,9 +231,7 @@ var calculatePoints = function(){
     pathLength = 0;
     
     pathLengthString = Math.round(pathLength).toString();
-	counter.textContent = pathLengthString.split(".",1).toString();
-  shareCode.textContent = storePoints();
-  optimalCounter.textContent = Math.round(calcBestPath());
+  calcBestPath();
   updateLengthBars();
   bestBar.setAttribute('height', '0')
   bestBar.setAttribute("y","2");
@@ -264,8 +253,6 @@ var calculateHandler = function(){
   genCoordinates();
   calculatePoints();
   best = ''
-  bestCounter.textContent = best;
-  codeInput.value = '';
 }
 
 calculateButton.addEventListener('click', calculateHandler);
@@ -274,11 +261,11 @@ defaultNumInput.addEventListener('keypress', function(event){
 	if(event.keyCode === 13){calculateHandler()}
 })
 
+/*
 var retrieveHandler = function(){
   if(retrieve(codeInput.value.toString()) === true){
     calculatePoints();
     best = ''
-    bestCounter.textContent = best;
     console.log(codeInput.value,'code');
    }
 }
@@ -290,6 +277,7 @@ codeInput.addEventListener('keypress', function(event){
     retrieveHandler();
   };
 })
+*/
 
 var storePoints = function(){
   var store = ""
@@ -311,7 +299,6 @@ var retrieve = function(string){
   }
   if(string.length > 5){
     number = Math.floor(string.length/2);
-    codeInput.value = string;
     while(i < string.length){
       var xCoord = (string.charCodeAt(i)-96)*20;
       var yCoord = (string.charCodeAt(i+1)-96)*20;
@@ -404,7 +391,6 @@ if(retrieve(window.location.hash.replace('#','')) === false){
 
 
 window.location.hash = '#' + storePoints();
-shareCode.textContent = storePoints();
 calculatePoints();
 }
 
