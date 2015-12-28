@@ -207,6 +207,7 @@ var genCoordinates = function(){
                           
 var calculatePoints = function(){
   //remove all points    
+  location.hash ='#' + storePoints();
   listOfPoints = [];
     while (svg.firstChild) {
     svg.removeChild(svg.firstChild);
@@ -320,7 +321,7 @@ codeInput.addEventListener('keypress', function(event){
 
 var storePoints = function(){
   var store = ""
-  listOfPoints.forEach(function(circle){
+  pointCoordinates.forEach(function(circle){
     //console.log('c',circle.x.toString());
     //var xString = (circle.x/20).toString();
     //var yString = (circle.y/20).toString();
@@ -353,6 +354,8 @@ var retrieve = function(string){
       i+=2
   	}
   	return true;	
+  }else{
+  	return false;
   }
 }
 
@@ -429,10 +432,17 @@ var updateLengthBars = function(){
 }
 
 defaultNumInput.value = defaultNumber.toString();
-genCoordinates();
-//retrieve('bascmbjkdifnhdddfghjlcgh');
-calculatePoints();
-shareCode.textContent = storePoints();
 
+if(retrieve(window.location.hash.replace('#','')) === false){
+	genCoordinates();
+}else{
+	console.log(pointCoordinates);
+}
+
+//retrieve('bascmbjkdifnhdddfghjlcgh');
+window.location.hash = '#' + storePoints();
+shareCode.textContent = storePoints();
+calculatePoints();
+console.log(location);
 }
 
