@@ -1,5 +1,5 @@
 window.onload = function(){
-var calculateButton = document.getElementById('calculate');
+var forwardButton = document.getElementById('forwardButton');
 var resetButton = document.getElementById('reset');
 var undoButton = document.getElementById('undo');
 var svg = document.getElementById('svg');
@@ -7,6 +7,7 @@ var svg = document.getElementById('svg');
 var defaultNumInput = document.getElementById('defaultNumInput');
 var lengthBar = document.getElementById('lengthBar');
 var bestBar = document.getElementById('bestBar');
+var backButton = document.getElementById('backButton');
 var defaultNumber = 12;
 var number = defaultNumber;
 var pathLength = 0;
@@ -16,6 +17,8 @@ var listOfPoints;
 var best;
 var perfectLength;
 var pointCoordinates = [];
+var listOfBoards = [];
+var boardIndex = -1;
     
 //this function describes what should happen when the user clicks on a circle
 var circleClickHandler = function(){
@@ -184,9 +187,13 @@ var genCoordinates = function(){
     pointCoordinates.push(point);
     i++;
   }
+  listOfBoards.push(pointCoordinates);
+  console.log(listOfBoards)
+  boardIndex++;
 }
                           
 var calculatePoints = function(){
+  console.log('calculatePoints running, boardIndex=', boardIndex)
   //remove all points
   location.hash = '#' + storePoints();
   listOfPoints = [];
@@ -255,8 +262,6 @@ var calculateHandler = function(){
   best = ''
 }
 
-calculateButton.addEventListener('click', calculateHandler);
-
 defaultNumInput.addEventListener('keypress', function(event){
 	if(event.keyCode === 13){calculateHandler()}
 })
@@ -305,6 +310,10 @@ var retrieve = function(string){
       var point = {x:xCoord, y:yCoord};
       pointCoordinates.push(point);
       i+=2
+  	}
+  	if(listOfBoards[boardIndex-1] !== pointCoordinates){
+  		listOfBoards.push(pointCoordinates);
+  		boardIndex +=1;
   	}
   	return true;	
   }else{
@@ -392,6 +401,28 @@ window.addEventListener('hashchange', function(){
 		}
 	}
 })
+
+forwardButton.addEventListener('click', function(){
+	if(listOfBoards[boardIndex+1]){
+		boardIndex += 1;
+		pointCoordinates = listOfBoards[boardIndex];
+		number = listOfPoints.length;
+		calculatePoints();
+	}else{
+		calculateHandler();
+	}
+});
+
+backButton.addEventListener('click',function(){
+	if(listOfBoards[boardIndex-1]){
+		boardIndex -= 1;
+		pointCoordinates = listOfBoards[boardIndex];
+		number = listOfPoints.length;
+		calculatePoints();
+	}
+})
+
+
 
 defaultNumInput.value = defaultNumber.toString();
 
