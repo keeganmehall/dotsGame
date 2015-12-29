@@ -187,8 +187,8 @@ var genCoordinates = function(){
 }
                           
 var calculatePoints = function(){
-  //remove all points    
-  location.hash ='#' + storePoints();
+  //remove all points
+  location.hash = '#' + storePoints();
   listOfPoints = [];
     while (svg.firstChild) {
     svg.removeChild(svg.firstChild);
@@ -299,7 +299,7 @@ var retrieve = function(string){
   }
   if(string.length > 5){
     number = Math.floor(string.length/2);
-    while(i < string.length){
+    while(i < number*2){
       var xCoord = (string.charCodeAt(i)-96)*20;
       var yCoord = (string.charCodeAt(i+1)-96)*20;
       var point = {x:xCoord, y:yCoord};
@@ -382,11 +382,23 @@ var updateLengthBars = function(){
   lengthBar.setAttribute('height', barHeight());
 }
 
+window.addEventListener('hashchange', function(){
+	if(window.location.hash.replace('#','') !== storePoints()){
+		if(retrieve(window.location.hash.replace('#','')) === true){
+			calculatePoints();
+		}else{
+			genCoordinates();
+			calculatePoints();
+		}
+	}
+})
+
 defaultNumInput.value = defaultNumber.toString();
 
 if(retrieve(window.location.hash.replace('#','')) === false){
 	genCoordinates();
 }
+
 
 
 
