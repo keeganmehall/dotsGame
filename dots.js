@@ -406,7 +406,7 @@ forwardButton.addEventListener('click', function(){
 	if(listOfBoards[boardIndex+1]){
 		boardIndex += 1;
 		pointCoordinates = listOfBoards[boardIndex];
-		number = listOfPoints.length;
+		number = pointCoordinates.length;
 		calculatePoints();
 	}else{
 		calculateHandler();
@@ -417,7 +417,7 @@ backButton.addEventListener('click',function(){
 	if(listOfBoards[boardIndex-1]){
 		boardIndex -= 1;
 		pointCoordinates = listOfBoards[boardIndex];
-		number = listOfPoints.length;
+		number = pointCoordinates.length;
 		calculatePoints();
 	}
 })
