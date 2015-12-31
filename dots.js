@@ -19,6 +19,8 @@ var perfectLength;
 var pointCoordinates = [];
 var listOfBoards = [];
 var boardIndex = -1;
+var bestPath = [];
+var lengthTable;
     
 //this function describes what should happen when the user clicks on a circle
 var circleClickHandler = function(){
@@ -173,8 +175,8 @@ var genCoordinates = function(){
     var ycoord;
     var genPoint = function(){
     	xcoord = Math.floor((Math.random() * 20) + 1)*20;
-      ycoord = Math.floor((Math.random() * 20) + 1)*20;        
-      if (pointCoordinates !== []){
+    	ycoord = Math.floor((Math.random() * 20) + 1)*20;        
+    	if (pointCoordinates !== []){
         pointCoordinates.forEach(function(point){
           if (xcoord === point.x && ycoord === point.y){
             genPoint();
@@ -188,12 +190,11 @@ var genCoordinates = function(){
     i++;
   }
   listOfBoards.push(pointCoordinates);
-  console.log(listOfBoards)
+  //console.log(listOfBoards)
   boardIndex++;
 }
                           
 var calculatePoints = function(){
-  console.log('calculatePoints running, boardIndex=', boardIndex)
   //remove all points
   location.hash = '#' + storePoints();
   listOfPoints = [];
@@ -244,6 +245,11 @@ var calculatePoints = function(){
   bestBar.setAttribute("y","2");
   bestBar.setAttribute('fill','#adadff');
   lengthBar.setAttribute('fill','blue');
+	
+	
+	console.log(difficulty(perfectLength*1.1), 'paths within 10%');	
+	console.log('total angle:', pathAngles(), 'radians');
+	
 }
 
 var calculateHandler = function(){
@@ -343,37 +349,75 @@ var calcBestPath = function(){
   var endIndex = 1;
   var middlePoints = (1<<(number-2))-1;
   var memo = new Float32Array((1<<(number-2)) * number).fill(-1);
+  var pathList = new Uint32Array((1<<(number-2)) * number*2).fill(-1);
   var optimalLength = function(startIndex,endIndex,middlePoints){
   	//functionCounter++;
     if(middlePoints === 0){
-    	return lengthTable[startIndex][endIndex];
+    	return{length:lengthTable[startIndex][endIndex], path0:0, path1:0};
     }else{
     	var memoIdx = middlePoints*number + startIndex;
       if (memo[memoIdx] > 0) {
-      	return memo[memoIdx];
+      	return{length:memo[memoIdx], path0:pathList[memoIdx*2], path1:pathList[memoIdx*2+1]};
       }
     
     	var bestLength = Infinity
+    	var path0;
+    	var path1;
+    	var nextStart;
+    	var pointsLeft = -1;
       for(var pointIndex=2; pointIndex<number; pointIndex++){
       	if((middlePoints &  (1 << (pointIndex-2))) !== 0){
+          pointsLeft++;
           var lengthToHere = lengthTable[startIndex][pointIndex];
           var nextMiddlePoints = middlePoints & ~(1<<(pointIndex-2));
-          var length = lengthToHere + optimalLength(pointIndex,endIndex,nextMiddlePoints);
+          var returnedObject = optimalLength(pointIndex,endIndex,nextMiddlePoints);
+          var length = lengthToHere + returnedObject.length;
           if(length<bestLength){
             bestLength = length;
+            path0 = returnedObject.path0;
+            path1 = returnedObject.path1;
+            nextStart = pointIndex-2;
           }
          }
       }
+      if(pointsLeft < 8){
+		path0 += (nextStart << (pointsLeft*4));
+      }else{
+      	path1 += (nextStart << ((pointsLeft-8)*4));
+      }
       
+           
       memo[memoIdx] = bestLength;
-      return bestLength;
+      pathList[memoIdx*2] = path0;
+      pathList[memoIdx*2+1] = path1;      
+      
+      return{length:bestLength, path0:path0, path1:path1};
     }
   }
 	//var functionCounter = 0;
   var startTime = +new Date();
-  perfectLength = optimalLength(startIndex,endIndex,middlePoints,Infinity);
+  var returnedObject = optimalLength(startIndex,endIndex,middlePoints,Infinity);
   var endTime = +new Date();
 	//timer.textContent = (endTime-startTime)/1000;
+  perfectLength = returnedObject.length;
+  
+  console.log('number', number);
+  bestPath.push(0);
+	if(number>10){  
+	  for(var k = number-11; k>-1; k--){
+	  	bestPath.push(((returnedObject.path1 >> (k*4)) & 15)+2);
+	  }
+	  for(var k = 7; k > -1; k--){
+	  	bestPath.push(((returnedObject.path0 >> (k*4)) & 15)+2);
+	  }
+	}else{
+		for(var k = number-3; k > -1; k--){
+			bestPath.push(((returnedObject.path0 >> (k*4)) & 15)+2);
+		}
+	}
+  bestPath.push(1);
+  console.log(bestPath);
+  
   console.log(('Calculated in ', endTime-startTime)/1000, ' seconds');
   //console.log('optimalLength ran', functionCounter, 'times');
   //console.log((endTime-startTime)/(1000*functionCounter),'s per run');
@@ -423,6 +467,77 @@ backButton.addEventListener('click',function(){
 })
 
 
+var pathAngles = function(){
+	var angle = function(pointIdx){
+		var P1 = bestPath[pointIdx-1];
+		var P2 = bestPath[pointIdx];
+		var P3 = bestPath[pointIdx+1];
+		return Math.acos((Math.pow(lengthTable[P1][P2] , 2) + Math.pow(lengthTable[P2][P3] , 2) - Math.pow(lengthTable[P3][P1] , 2)) / (2 * lengthTable[P1][P2] * lengthTable[P2][P3]));
+	}
+	var angleSum = 0
+	for(var i=1; i < number-1; i++){
+		angleSum += Math.PI - angle(i);
+	}
+	return angleSum;
+}
+
+
+var difficulty = function(threshold){
+
+	
+	
+	var calcLengths = function(){
+		var lengthTable = []
+		var lineLength = function(p1,p2) {
+		  return Math.sqrt(Math.pow(p1.x-p2.x,2)+Math.pow(p1.y-p2.y,2))
+		};
+		listOfPoints.forEach(function(outerPoint,columnIndex){
+		  var column = []
+		  listOfPoints.forEach(function(innerPoint,rowIndex){
+		    var length = lineLength(outerPoint,innerPoint)
+		    column.push(length);
+		  })
+		  lengthTable.push(column);
+		})
+		return lengthTable  
+	}
+	lengthTable = calcLengths();
+	
+	
+	
+	var middlePoints = (1<<(number-2))-1;
+	var startIndex = 0;
+	var endIndex = 1;
+	var paths = 0;
+	var recursive = function(startIndex,middlePoints,length){
+		functionCounter++;
+		if(length > threshold){
+			return;
+		}
+		if(middlePoints === 0){
+			//console.log('end reached');
+			baseCaseCounter++
+			if(length + lengthTable[startIndex][1] < threshold){
+				paths++;
+			}
+		}else{
+			var pointIndex;
+			for(pointIndex=2; pointIndex<number; pointIndex++){
+				if((middlePoints & (1<<(pointIndex-2))) !== 0){
+					var nextMiddlePoints = middlePoints & ~(1<<(pointIndex-2));
+					var nextLength = length + lengthTable[startIndex][pointIndex];
+					recursive(pointIndex,nextMiddlePoints,nextLength);
+				}
+			}
+		}
+	}
+	var startTime = +new Date()
+	recursive(startIndex,middlePoints,0);
+	console.log((+new Date())-startTime);
+	return paths;
+}
+
+
 
 defaultNumInput.value = defaultNumber.toString();
 
@@ -434,6 +549,9 @@ if(retrieve(window.location.hash.replace('#','')) === false){
 
 
 window.location.hash = '#' + storePoints();
+
+var functionCounter = 0;
+var baseCaseCounter = 0;
 calculatePoints();
 }
 
