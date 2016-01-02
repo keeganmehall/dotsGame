@@ -174,11 +174,11 @@ var genCoordinates = function(){
     var xcoord;
     var ycoord;
     var genPoint = function(){
-    	xcoord = Math.floor((Math.random() * 20) + 1)*20;
-    	ycoord = Math.floor((Math.random() * 20) + 1)*20;        
+    	xcoord = Math.floor((Math.random() * 390) + 15);
+    	ycoord = Math.floor((Math.random() * 390) + 15);        
     	if (pointCoordinates !== []){
         pointCoordinates.forEach(function(point){
-          if (xcoord === point.x && ycoord === point.y){
+          if (Math.pow(xcoord - point.x,2) + Math.pow(ycoord - point.y,2) < 500){
             genPoint();
           }
         })
@@ -189,6 +189,7 @@ var genCoordinates = function(){
     pointCoordinates.push(point);
     i++;
   }
+  
   listOfBoards.push(pointCoordinates);
   //console.log(listOfBoards)
   boardIndex++;
@@ -290,34 +291,133 @@ codeInput.addEventListener('keypress', function(event){
 })
 */
 
+var numToBase64 = function(number){
+	var string = '';
+	var numToChar = function(number){
+		if(number > 64 || number < 0){
+			console.log('error');
+			return;
+		}
+		if(number < 10){
+			return(String.fromCharCode(number + 48))
+		}
+		if(number < 36){
+			return(String.fromCharCode(number + 55))
+		}
+		if(number < 62){
+			return(String.fromCharCode(number + 61))
+		}
+		if(number < 63){
+			return('-')
+		}
+		if(number < 64){
+			return '~';
+		}
+		if(number === 64){
+			return '10';
+		}
+	}
+	
+	
+	var i = 1;
+	if(number === 0){
+			string += '0';
+		}
+	while(number > 0){
+		var mod = number % Math.pow(64,i);
+		string = numToChar(mod/Math.pow(64,i-1)) + string;
+		number -= mod;
+		i++;
+	}
+	return string;
+}
+
+var base64ToNum = function(string){
+	var charToNum = function(char){
+		var code = char.charCodeAt(0)
+		if(code > 47 && code < 58){
+			return code - 48;
+		}
+		if(code > 64 && code < 91){
+			return code - 55;
+		} 
+		if(code > 96 && code < 123){
+			return code - 61;
+		}
+		if(char === '-'){
+			return 62
+		}
+		if(char === '~'){
+			return 63
+		}else{
+			console.log('invalid code');
+		}
+	}
+	var number = 0;
+	var length = string.length;
+	for(var i = 0; i < length; i++)
+		number += charToNum(string[i])*Math.pow(64, length-i-1);
+		i++;
+	return number;
+}
+
+var pointToNum = function(point){
+	return point.x + point.y*512;
+}
+
+var numToPoint = function(num){
+	var mod = num % 512;
+ 	var point = {
+		x:mod,
+		y:(num - mod)/512
+	}
+	return point;
+}
+
 var storePoints = function(){
+  var checksum = 0
   var store = ""
   pointCoordinates.forEach(function(circle){
-    var xString = String.fromCharCode(circle.x/20+96);
-    var yString = String.fromCharCode(circle.y/20+96);
-    store += xString
-    store += yString
+    var num = pointToNum(circle);
+    checksum += num
+    store += numToBase64(num);
   })
+  var checksumString = numToBase64(checksum);
+  while(checksumString.length < 4){
+  	checksumString = '0' + checksumString;
+  }
+  store += checksumString;
+
   return(store)
 }
 
 var retrieve = function(string){
   i = 0;
-  pointCoordinates = [];
-	string = string.replace(/[^a-t]/g,'');
-  if(string.length>42){
-  	string = string.slice(0,42);
+  var newPointCoordinates = [];
+	string = string.replace(/[^a-zA-Z0-9~-]/g,'');
+  if(string.length>52){
+  	string = string.slice(0,52);
   }
-  if(string.length > 5){
-    number = Math.floor(string.length/2);
-    while(i < number*2){
-      var xCoord = (string.charCodeAt(i)-96)*20;
-      var yCoord = (string.charCodeAt(i+1)-96)*20;
-      var point = {x:xCoord, y:yCoord};
-      pointCoordinates.push(point);
-      i+=2
+  if(string.length > 13){
+    var oldNumber = number;
+    number = Math.floor((string.length-4)/3);
+    var checksum = 0
+    while(i < number*3){
+      var subString = string.slice(i,i+3);
+      var num = base64ToNum(subString);
+      checksum += num;
+      newPointCoordinates.push(numToPoint(num));
+      i+=3
   	}
-  	if(listOfBoards[boardIndex-1] !== pointCoordinates){
+  	if(checksum === base64ToNum(string.slice(string.length-4))){
+  		pointCoordinates = newPointCoordinates;
+  	}else{
+  		number = oldNumber;
+  		console.log('invalid checksum', checksum, '!==', base64ToNum(string.slice(string.length-4)))
+  		return false
+  	}
+  	
+  	if(listOfBoards[boardIndex-1] !== pointCoordinates && pointCoordinates === newPointCoordinates){
   		listOfBoards.push(pointCoordinates);
   		boardIndex +=1;
   	}
@@ -401,7 +501,7 @@ var calcBestPath = function(){
 	//timer.textContent = (endTime-startTime)/1000;
   perfectLength = returnedObject.length;
   
-  console.log('number', number);
+
   bestPath = [0]
 	if(number>10){  
 	  for(var k = number-11; k>-1; k--){
@@ -416,7 +516,6 @@ var calcBestPath = function(){
 		}
 	}
   bestPath.push(1);
-  console.log(bestPath);
   
   console.log(('Calculated in ', endTime-startTime)/1000, ' seconds');
   //console.log('optimalLength ran', functionCounter, 'times');
@@ -437,7 +536,7 @@ var updateLengthBars = function(){
 
 window.addEventListener('hashchange', function(){
 	if(window.location.hash.replace('#','') !== storePoints()){
-		if(retrieve(window.location.hash.replace('#','')) === true){
+		if(retrieve(window.location.hash.replace('#','')) === true || pointCoordinates.length > 2){
 			calculatePoints();
 		}else{
 			genCoordinates();
@@ -553,5 +652,7 @@ window.location.hash = '#' + storePoints();
 var functionCounter = 0;
 var baseCaseCounter = 0;
 calculatePoints();
+
+
 }
 
