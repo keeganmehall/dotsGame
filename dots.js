@@ -402,7 +402,7 @@ var calcBestPath = function(){
   perfectLength = returnedObject.length;
   
   console.log('number', number);
-  bestPath.push(0);
+  bestPath = [0]
 	if(number>10){  
 	  for(var k = number-11; k>-1; k--){
 	  	bestPath.push(((returnedObject.path1 >> (k*4)) & 15)+2);
