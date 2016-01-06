@@ -178,7 +178,7 @@ var genCoordinates = function(){
     	ycoord = Math.floor((Math.random() * 390) + 15);        
     	if (pointCoordinates !== []){
         pointCoordinates.forEach(function(point){
-          if (Math.pow(xcoord - point.x,2) + Math.pow(ycoord - point.y,2) < 500){
+          if (Math.pow(xcoord - point.x,2) + Math.pow(ycoord - point.y,2) < 2500){
             genPoint();
           }
         })
