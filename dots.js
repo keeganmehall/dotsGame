@@ -38,7 +38,9 @@ var circleClickHandler = function(){
 
 
       //fill the circle gray
-    this.setAttribute('fill','#cccccc')
+    if(listOfPoints[index].type !== 'end'){
+    	this.setAttribute('fill','#cccccc');
+    }
 
       //draw line from previous point to currently clicked point
     var lineSVG = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -81,7 +83,7 @@ var circleClickHandler = function(){
           	point.svgElement.setAttribute('r','12');
           });
         }
-      }else{this.setAttribute('fill', 'red')}
+      }
     }
   }
   updateLengthBars();
