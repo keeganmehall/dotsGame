@@ -80,8 +80,8 @@ var circleClickHandler = function(){
           	point.svgElement.setAttribute('fill','green');
           	point.svgElement.setAttribute('r','12');
           });
-        }else{this.setAttribute('fill', 'red')}
-      }
+        }
+      }else{this.setAttribute('fill', 'red')}
     }
   }
   updateLengthBars();
