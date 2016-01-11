@@ -65,18 +65,23 @@ var circleClickHandler = function(){
     
     calcPathLength()
     if (listOfPoints[index].type === 'end'){
-      if (pathLength < best || isNaN(best) || !best){
+      if (pathLength <= best || isNaN(best) || !best){
         storeBest();
         bestBar.setAttribute('y', 410-barHeight());
-        bestBar.setAttribute('height', barHeight())
+        bestBar.setAttribute('height', barHeight());
         if(Math.abs(pathLength-perfectLength)<0.2){
         	console.log('error =', Math.abs(pathLength-perfectLength));
           bestBar.setAttribute('fill','green');          
           lengthBar.setAttribute('fill','green');
-        }
+          listOfLines.forEach(function(line){
+          	line.svgElement.setAttribute("style","stroke:green;stroke-width:3");
+          });
+          listOfPoints.forEach(function(point){
+          	point.svgElement.setAttribute('fill','green');
+          	point.svgElement.setAttribute('r','12');
+          });
+        }else{this.setAttribute('fill', 'red')}
       }
-      this.setAttribute('fill', 'red');
-      this.setAttribute('r',12)
     }
   }
   updateLengthBars();
@@ -104,11 +109,11 @@ resetButton.addEventListener('click',function(){
     pathLength = 0
     pathLengthString = pathLength.toString()
   listOfPoints.forEach(function(circle){
+    circle.svgElement.setAttribute('r',10);
     if(circle.type === 'start'){
       circle.state = 'start'
     } else if(circle.type === 'end'){
-      circle.svgElement.setAttribute('r',10)
-      circle.state = 'end';
+      circle.state = 'end'
     } else{
       circle.state = 'unconnected';
     }
@@ -124,17 +129,19 @@ var length = function(line){
 undoButton.addEventListener('click',function(){
     if (listOfLines.length > 1){
         var lineDescriptor = listOfLines[listOfLines.length-1]
-        svg.removeChild(lineDescriptor.svgElement)
-    if (lineDescriptor.p2.type === 'start'){
-        lineDescriptor.p2.svgElement.setAttribute('fill','#00ff00')
-        lineDescriptor.p2.state = 'start'
-    } else if (lineDescriptor.p2.type === 'end'){
-        lineDescriptor.p2.svgElement.setAttribute('fill','red')
-        lineDescriptor.p2.state = 'end'
-    } else{
-        lineDescriptor.p2.svgElement.setAttribute('fill','black')
-        lineDescriptor.p2.state = 'unconnected'
-    }
+        svg.removeChild(lineDescriptor.svgElement);
+        lineDescriptor.p2.svgElement.setAttribute('r','10');
+		if (lineDescriptor.p2.type === 'end'){
+		    lineDescriptor.p2.svgElement.setAttribute('fill','red')
+		    lineDescriptor.p2.state = 'end'
+		} else{
+		    lineDescriptor.p2.svgElement.setAttribute('fill','black')
+		    lineDescriptor.p2.state = 'unconnected'
+		}
+		if(listOfLines.length === 2){
+			listOfPoints[0].svgElement.setAttribute('r','10');
+    		listOfPoints[0].svgElement.setAttribute('fill','#00ff00');
+		}
         listOfLines.pop();
         calcPathLength();
         updateLengthBars();
@@ -248,8 +255,9 @@ var calculatePoints = function(){
   lengthBar.setAttribute('fill','blue');
 	
 	
-	console.log(difficulty(perfectLength*1.1), 'paths within 10%');	
+	if(number < 14){console.log(difficulty(perfectLength*1.1), 'paths within 10%')};	
 	console.log('total angle:', pathAngles(), 'radians');
+	console.log('perfectLength', perfectLength);
 	
 }
 
