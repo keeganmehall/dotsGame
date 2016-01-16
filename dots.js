@@ -11,7 +11,7 @@ var backButton = document.getElementById('backButton');
 var defaultNumber = 5;
 var number = defaultNumber;
 var pathLength = 0;
-var numPaths = 3;
+var numPaths = 10;
 var i = 0;
 var listOfLines;
 var listOfPoints;
@@ -70,6 +70,7 @@ var circleClickHandler = function(){
         storeBest();
         bestBar.setAttribute('y', 410-barHeight());
         bestBar.setAttribute('height', barHeight());
+        console.log(pathLength,perfectLength);
         if(Math.abs(pathLength-perfectLength)<0.2){
         	console.log('error =', Math.abs(pathLength-perfectLength));
           bestBar.setAttribute('fill','green');          
@@ -198,6 +199,7 @@ var genCoordinates = function(){
     i++;
   }
   
+  
   listOfBoards.push(pointCoordinates);
   //console.log(listOfBoards)
   boardIndex++;
@@ -256,7 +258,7 @@ var calculatePoints = function(){
   lengthBar.setAttribute('fill','blue');
 	
 	
-	if(number < 14){console.log(difficulty(perfectLength*1.1), 'paths within 10%')};	
+	if(number < 14){console.log(difficulty(1.1*perfectLength), 'paths within 10%')};	
 	console.log('total angle:', pathAngles(), 'radians');
 	console.log('perfectLength', perfectLength);
 	
@@ -458,14 +460,15 @@ var calcBestPath = function(){
 	var endIndex = 1;
 	var middlePoints = (1<<(number-2))-1;
 	var memo = new Float32Array((1<<(number-2)) * number * numPaths).fill(-1);
-	var pathList = new Uint32Array((1<<(number-2)) * number * 2 * numPaths).fill(4294967295);
+	var pathList = new Uint8Array((1<<(number-2)) * number * (number-2) * numPaths).fill(255);
 	var optimalLength = function(startIndex,endIndex,middlePoints){
 		//functionCounter++;
 		var returnArray = [];
+		var emptyPath = new Uint8Array(number - 2);
 		if(middlePoints === 0){
-			returnArray[0] = {length:lengthTable[startIndex][endIndex], path0:0, path1:0};
+			returnArray[0] = {length:lengthTable[startIndex][endIndex], path:emptyPath};
 		  	for(i = 1; i<numPaths; i++){
-		  		returnArray.push({length:Infinity, path0:0, path1:0});
+		  		returnArray.push({length:Infinity, path:emptyPath});
 		  	}
 		  	//console.log(returnArray, returnArray[0]);
 		  	return returnArray;
@@ -476,17 +479,18 @@ var calcBestPath = function(){
       	
 				for(var i = 0; i < numPaths; i++){
 		  			if(memo[memoIdx+i] > 0){
-		  				returnArray[i] = {length:memo[memoIdx+i], path0:pathList[(memoIdx+i)*2], path1:pathList[(memoIdx+i)*2+1]};
+		  				returnArray[i] = {length:memo[memoIdx+i], path:pathList.slice((memoIdx+i)*(number-2), (memoIdx+i+1)*(number-2))};
 		  			}else{
-		  				returnArray[i] = {length:Infinity, path0:0, path1:0};	
+		  				returnArray[i] = {length:Infinity, path:emptyPath};	
 		  			}
 		  		}
       			return returnArray;
 			}
     
 			for(var i = 0; i < numPaths; i++){
-		 		returnArray[i] = {length:Infinity, path0:0, path1:0};
+		 		returnArray[i] = {length:Infinity, path:emptyPath};
 		  	}
+		  	
     		//console.log(returnArray);
     		var nextStart = [];
     		var pointsLeft = -1;
@@ -496,21 +500,24 @@ var calcBestPath = function(){
 					var lengthToHere = lengthTable[startIndex][pointIndex];
 					var nextMiddlePoints = middlePoints & ~(1<<(pointIndex-2));
 					var result = optimalLength(pointIndex,endIndex,nextMiddlePoints);
-					console.log('result', result, result[0], result[1], result[2]);
+					//console.log('result', result, result[0], result[1], result[2]);
+					
 					for(var i=0; i<numPaths; i++){
 						for(var j=0; j<=i; j++){
-							console.log(i,j,result[j],returnArray[i]);
+							//console.log(i,j,result[j],returnArray[i]);
 							if(result[j].length + lengthToHere < returnArray[i].length){
 								returnArray[i].length = result[j].length + lengthToHere;
-								returnArray[i].path0 = result[j].path0;
-								returnArray[i].path1 = result[j].path1;
-								console.log(i, returnArray[i]);
+								nextStart[i] = pointIndex - 2;
+								returnArray[i].path = result[j].path;
+									
+								//console.log(i, returnArray[i]);
 								result[j].length = Infinity;
-								nextStart[i] = pointIndex-2;
+								break;
+								
 							}
 						}
 					}
-					console.log('return array after for loops', returnArray[0].length, returnArray[1], returnArray[2]);
+					//console.log('return array after for loops', returnArray[0].length, returnArray[1], returnArray[2]);
 					/*
 					var length = lengthToHere + returnedObject.length;
 						if(length<bestLength){
@@ -524,18 +531,17 @@ var calcBestPath = function(){
 			}
 			//console.log(returnArray); 
 			for(var i=0; i<numPaths; i++){
-				//console.log(i);
-				if(pointsLeft < 8){
-				returnArray[i].path0 += (nextStart << (pointsLeft*4));
-				}else{
-					returnArray[i].path1 += (nextStart << ((pointsLeft-8)*4));
-				}
+
+				returnArray[i].path[pointsLeft] = nextStart[i];
+
 			}
       
 			for(var i = 0; i < numPaths; i++){ 
-				memo[memoIdx+i] = lengthToHere + returnArray[i].length;
-				pathList[(memoIdx+i)*2] = returnArray[i].path0;
-				pathList[(memoIdx+i)*2+1] = returnArray[i].path1; 
+				memo[memoIdx+i] = returnArray[i].length;
+				for(var m = 0; m < number-2; m++){
+					pathList[(memoIdx+i)*(number-2) + m] = returnArray[i].path[m];
+				}
+
 			}     
 			//console.log(returnArray);
 			return returnArray;
@@ -551,17 +557,8 @@ var calcBestPath = function(){
 	perfectLength = returnedObject.length;
 
 	bestPath = [0]
-	if(number>10){  
-		for(var k = number-11; k>-1; k--){
-			bestPath.push(((returnedObject.path1 >> (k*4*numPaths)) & 15)+2);
-		}
-		for(var k = 7; k > -1; k--){
-			bestPath.push(((returnedObject.path0 >> (k*4*numPaths)) & 15)+2);
-		}
-	}else{
-		for(var k = number-3; k > -1; k--){
-			bestPath.push(((returnedObject.path0 >> (k*4*numPaths)) & 15)+2);
-		}
+	for(var k = number-3; k>-1; k--){
+		bestPath.push(returnedObject.path[k]+2);
 	}
 	bestPath.push(1);
 	console.log(bestPath);
