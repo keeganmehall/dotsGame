@@ -63,6 +63,8 @@ var circleClickHandler = function(){
       lineSVG.setAttribute('x2',line.x2)
       lineSVG.setAttribute('y2',line.y2)
     svg.appendChild(lineSVG)
+    svg.appendChild(listOfPoints[index].svgElement)
+    svg.appendChild(listOfLines[prevIndex].p2.svgElement)
     listOfPoints[index].state = 'connected'
     
     calcPathLength()
