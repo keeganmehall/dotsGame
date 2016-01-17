@@ -98,14 +98,24 @@ var circleClickHandler = function(){
           bestBar.setAttribute('fill','green');          
           lengthBar.setAttribute('fill','green');
           var largeLineWidth = lineWidth*1.5;
-          listOfLines.forEach(function(line){
-          	line.svgElement.setAttribute("style","stroke:green;stroke-width:" + largeLineWidth);
-          });
           var largeCircleSize = circleSize*1.2;
-          listOfPoints.forEach(function(point){
+          var changeLine = function(line){
+          	line.svgElement.setAttribute("style","stroke:green;stroke-width:" + largeLineWidth);
+          }
+          var changePoint = function(line){
+          	line.p2.svgElement.setAttribute('fill','green');
+          	line.p2.svgElement.setAttribute('r',largeCircleSize);
+          }
+          var animationTime = 300;
+          listOfLines.forEach(function(line, index){
+          	setTimeout(changePoint, (number-index)*animationTime/number, line);
+          	setTimeout(changeLine, (number-index+0.2)*animationTime/number, line);
+          });
+          
+          /*listOfPoints.forEach(function(point){
           	point.svgElement.setAttribute('fill','green');
           	point.svgElement.setAttribute('r',largeCircleSize);
-          });
+          });*/
         }
       }
     }
