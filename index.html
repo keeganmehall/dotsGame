@@ -1,18 +1,21 @@
+<meta charset="UTF-8" name=viewport content="width=device-width, initial-scale=1, user-scalable=0">
 <head>
 	<script src="dots.js"></script>
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<div>
-		<svg id='svg' width="420", height="420"></svg>
-		<svg id="lengthBarSVG" width="30", height="420">
-		  <rect id = "lengthBarsBackground" width="30" height="416" rx='5' fill='#b0b0b0'></rect>
-		  <rect id="bestBar" width="18" x="6" rx="5"></rect>
-		  <rect id="lengthBar" x="6" y="400" height="10" width="18" fill="blue" rx="5"></rect>
-		  <rect id="optimalBar" width="26" x="2" height="3" rx="2.5" y="133" fill="green"></rect>
-		</svg>
+	<div width ="460">
+		<svg id='outerSVG' width="460", height='420'>
+			<svg id='svg' width="420", height="420" ></svg>
+			<svg id="lengthBarSVG" width="30", height="420" x="430">
+			  <rect id = "lengthBarsBackground" width="30" height="416" rx='5' fill='#b0b0b0'></rect>
+			  <rect id="bestBar" width="18" x="6" rx="5"></rect>
+			  <rect id="lengthBar" x="6" y="400" height="10" width="18" fill="blue" rx="5"></rect>
+			  <rect id="optimalBar" width="26" x="2" height="3" rx="2.5" y="133" fill="green"></rect>
+			</svg>
+		<svg/>
 	</div>
-	<div>
+	<div width ='420' id='controls'>
 		<img id='backButton' src='backwardArrow.svg' height='40'></img>
 		<input type="number" min="3" max="22" id="defaultNumInput">
 		<img id='reset' src='resetButton.svg' height='40'></img>

@@ -21,6 +21,13 @@ var listOfBoards = [];
 var boardIndex = -1;
 var bestPath = [];
 var lengthTable;
+
+var setScale = function(){
+	var scale = Math.min(window.innerHeight/490 , window.innerWidth/480);
+	document.body.style.transform = 'scale(' + scale + ')';
+	document.body.style.webkittransform = 'scale(' + scale + ')';
+}
+window.addEventListener("resize", setScale)
     
 //this function describes what should happen when the user clicks on a circle
 var circleClickHandler = function(){
@@ -267,8 +274,8 @@ var calculatePoints = function(){
 
 var calculateHandler = function(){
   var newDefaultNumber = parseInt(defaultNumInput.value,10);
-  if(newDefaultNumber > 21){
-  	defaultNumber = 21;
+  if(newDefaultNumber > 18){
+  	defaultNumber = 18;
   }else if(2 < newDefaultNumber){
   	defaultNumber = newDefaultNumber;
   }else if(3 > newDefaultNumber){
@@ -649,6 +656,7 @@ var difficulty = function(threshold){
 }
 
 
+setScale();
 
 defaultNumInput.value = defaultNumber.toString();
 
