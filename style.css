@@ -3,6 +3,7 @@
   height:40px;
   position:relative;
   top:-15px;
+  border: 1px solid #cdcdcd;
 }
 #codeInput{
   width:190px;
@@ -12,7 +13,6 @@
 	text-align:center;
 }
 body{
-	overflow: hidden;
 	transform-origin: 0 0;
 	
 	-webkit-transform-origin: 0 0;

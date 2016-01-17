@@ -21,13 +21,26 @@ var listOfBoards = [];
 var boardIndex = -1;
 var bestPath = [];
 var lengthTable;
+var circleSize = 10;
+var lineWidth = 2;
+var mobile = false;
+
+if(/mobi|android|touch|mini/i.test(navigator.userAgent.toLowerCase())){
+	mobile = true;
+	document.body.style.content = "width=device-width, initial-scale=1, user-scalable=0";
+	document.body.style.overflow = 'hidden';
+	circleSize = 15;
+	lineWidth = 3;
+}
 
 var setScale = function(){
 	var scale = Math.min(window.innerHeight/490 , window.innerWidth/480);
 	document.body.style.transform = 'scale(' + scale + ')';
 	document.body.style.webkittransform = 'scale(' + scale + ')';
 }
-window.addEventListener("resize", setScale)
+if(mobile){
+	window.addEventListener("resize", setScale)
+}
     
 //this function describes what should happen when the user clicks on a circle
 var circleClickHandler = function(){
@@ -64,7 +77,7 @@ var circleClickHandler = function(){
       };
 
       listOfLines.push(line)
-    lineSVG.setAttribute("style","stroke:rgb(0,0,0);stroke-width:2")
+    lineSVG.setAttribute("style","stroke:rgb(0,0,0);stroke-width:" + lineWidth)
       lineSVG.setAttribute('x1',line.x1)
       lineSVG.setAttribute('y1',line.y1)
       lineSVG.setAttribute('x2',line.x2)
@@ -84,12 +97,14 @@ var circleClickHandler = function(){
         	console.log('error =', Math.abs(pathLength-perfectLength));
           bestBar.setAttribute('fill','green');          
           lengthBar.setAttribute('fill','green');
+          var largeLineWidth = lineWidth*1.5;
           listOfLines.forEach(function(line){
-          	line.svgElement.setAttribute("style","stroke:green;stroke-width:3");
+          	line.svgElement.setAttribute("style","stroke:green;stroke-width:" + largeLineWidth);
           });
+          var largeCircleSize = circleSize*1.2;
           listOfPoints.forEach(function(point){
           	point.svgElement.setAttribute('fill','green');
-          	point.svgElement.setAttribute('r','12');
+          	point.svgElement.setAttribute('r',largeCircleSize);
           });
         }
       }
@@ -120,7 +135,7 @@ resetButton.addEventListener('click',function(){
     pathLength = 0
     pathLengthString = pathLength.toString()
   listOfPoints.forEach(function(circle){
-    circle.svgElement.setAttribute('r',10);
+    circle.svgElement.setAttribute('r',circleSize);
     if(circle.type === 'start'){
       circle.state = 'start'
     } else if(circle.type === 'end'){
@@ -141,7 +156,7 @@ undoButton.addEventListener('click',function(){
     if (listOfLines.length > 1){
         var lineDescriptor = listOfLines[listOfLines.length-1]
         svg.removeChild(lineDescriptor.svgElement);
-        lineDescriptor.p2.svgElement.setAttribute('r','10');
+        lineDescriptor.p2.svgElement.setAttribute('r','circleSize');
 		if (lineDescriptor.p2.type === 'end'){
 		    lineDescriptor.p2.svgElement.setAttribute('fill','red')
 		    lineDescriptor.p2.state = 'end'
@@ -150,7 +165,7 @@ undoButton.addEventListener('click',function(){
 		    lineDescriptor.p2.state = 'unconnected'
 		}
 		if(listOfLines.length === 2){
-			listOfPoints[0].svgElement.setAttribute('r','10');
+			listOfPoints[0].svgElement.setAttribute('r','circleSize');
     		listOfPoints[0].svgElement.setAttribute('fill','#00ff00');
 		}
         listOfLines.pop();
@@ -243,7 +258,7 @@ var calculatePoints = function(){
         listOfPoints.push(circle)
         circleSVG.setAttribute('cx',randomx)//set circle x position
         circleSVG.setAttribute('cy',randomy)//set circle y position
-        circleSVG.setAttribute('r',10)      //set circle radius
+        circleSVG.setAttribute('r',circleSize)      //set circle radius
         circleSVG.id = i;
         
         //add circle to svg image which is the svg tag in the html box
@@ -656,7 +671,7 @@ var difficulty = function(threshold){
 }
 
 
-setScale();
+if(mobile){setScale()}
 
 defaultNumInput.value = defaultNumber.toString();
 
