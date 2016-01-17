@@ -156,7 +156,7 @@ undoButton.addEventListener('click',function(){
     if (listOfLines.length > 1){
         var lineDescriptor = listOfLines[listOfLines.length-1]
         svg.removeChild(lineDescriptor.svgElement);
-        lineDescriptor.p2.svgElement.setAttribute('r','circleSize');
+        lineDescriptor.p2.svgElement.setAttribute('r',circleSize);
 		if (lineDescriptor.p2.type === 'end'){
 		    lineDescriptor.p2.svgElement.setAttribute('fill','red')
 		    lineDescriptor.p2.state = 'end'
@@ -165,7 +165,7 @@ undoButton.addEventListener('click',function(){
 		    lineDescriptor.p2.state = 'unconnected'
 		}
 		if(listOfLines.length === 2){
-			listOfPoints[0].svgElement.setAttribute('r','circleSize');
+			listOfPoints[0].svgElement.setAttribute('r',circleSize);
     		listOfPoints[0].svgElement.setAttribute('fill','#00ff00');
 		}
         listOfLines.pop();
