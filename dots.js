@@ -34,7 +34,7 @@ if(/mobi|android|touch|mini/i.test(navigator.userAgent.toLowerCase())){
 }
 
 var setScale = function(){
-	var scale = Math.min(window.innerHeight/490 , window.innerWidth/480);
+	var scale = Math.min(window.innerHeight/480 , window.innerWidth/480);
 	document.body.style.transform = 'scale(' + scale + ')';
 	document.body.style.webkittransform = 'scale(' + scale + ')';
 }
@@ -91,7 +91,7 @@ var circleClickHandler = function(){
     if (listOfPoints[index].type === 'end'){
       if (pathLength <= best || isNaN(best) || !best){
         storeBest();
-        bestBar.setAttribute('y', 410-barHeight());
+        bestBar.setAttribute('y', 424-barHeight());
         bestBar.setAttribute('height', barHeight());
         if(Math.abs(pathLength-perfectLength)<0.2){
         	console.log('error =', Math.abs(pathLength-perfectLength));
@@ -207,8 +207,8 @@ var genCoordinates = function(){
     var xcoord;
     var ycoord;
     var genPoint = function(){
-    	xcoord = Math.floor((Math.random() * 390) + 15);
-    	ycoord = Math.floor((Math.random() * 390) + 15);        
+    	xcoord = Math.floor((Math.random() * 390) + 20);
+    	ycoord = Math.floor((Math.random() * 390) + 20);        
     	if (pointCoordinates !== []){
         pointCoordinates.forEach(function(point){
           if (Math.pow(xcoord - point.x,2) + Math.pow(ycoord - point.y,2) < 2500){
@@ -558,13 +558,13 @@ var calcBestPath = function(){
 }
 
 var barHeight = function(){
-	var height = 10+pathLength*400/(1.5*perfectLength);
-  if (height > 408){
-  	return 408;
+	var height = 10+(pathLength*408/(1.5*perfectLength));
+  if (height > 418){
+  	return 418;
   }else{return height}
 }
 var updateLengthBars = function(){
-  lengthBar.setAttribute('y',410-barHeight());
+  lengthBar.setAttribute('y',424-barHeight());
   lengthBar.setAttribute('height', barHeight());
 }
 
