@@ -59,7 +59,7 @@ var circleClickHandler = function(){
 
       //fill the circle gray
     if(listOfPoints[index].type !== 'end'){
-    	this.setAttribute('fill','#cccccc');
+    	listOfPoints[index].svgElement.setAttribute('fill','#bbbbbb');
     }
 
       //draw line from previous point to currently clicked point
@@ -90,35 +90,42 @@ var circleClickHandler = function(){
     
     calcPathLength()
     if (listOfPoints[index].type === 'end'){
-      if (pathLength <= best || isNaN(best) || !best){
-        storeBest();
-        bestBar.setAttribute('y', 424-barHeight());
-        bestBar.setAttribute('height', barHeight());
-        if(Math.abs(pathLength-perfectLength)<0.2){
-        	console.log('error =', Math.abs(pathLength-perfectLength));
-          bestBar.setAttribute('fill','green');          
-          lengthBar.setAttribute('fill','green');
-          var largeLineWidth = lineWidth*1.5;
-          var largeCircleSize = circleSize*1.2;
-          var changeLine = function(line){
-          	line.svgElement.setAttribute("style","stroke:green;stroke-width:" + largeLineWidth);
-          }
-          var changePoint = function(line){
-          	line.p2.svgElement.setAttribute('fill','green');
-          	line.p2.svgElement.setAttribute('r',largeCircleSize);
-          }
-          var animationTime = 300;
-          listOfLines.forEach(function(line, index){
-          	setTimeout(changePoint, (number-index)*animationTime/number, line);
-          	setTimeout(changeLine, (number-index+0.2)*animationTime/number, line);
-          });
-          
-          /*listOfPoints.forEach(function(point){
-          	point.svgElement.setAttribute('fill','green');
-          	point.svgElement.setAttribute('r',largeCircleSize);
-          });*/
-        }
-      }
+		if(best && !isNaN(best) && pathLength - best > 0.01){
+			console.log('finished, but you have done better');
+		}else if(best && !isNaN(best) && Math.abs(pathLength-best) < 0.01){
+			console.log('same best path');
+		}
+		if(pathLength < best || isNaN(best) || !best){
+			console.log('new best path');
+			storeBest();
+			bestBar.setAttribute('y', 424-barHeight());
+			bestBar.setAttribute('height', barHeight());
+      	}
+		if(pathLength-perfectLength<0.01){
+			console.log('solved', 'error =', Math.abs(pathLength-perfectLength));
+			bestBar.setAttribute('fill','green');          
+			lengthBar.setAttribute('fill','green');
+			var largeLineWidth = lineWidth*1.5;
+			var largeCircleSize = circleSize*1.2;
+			var changeLine = function(line){
+				line.svgElement.setAttribute("style","stroke:green;stroke-width:" + largeLineWidth);
+			}
+			var changePoint = function(line){
+				line.p2.svgElement.setAttribute('fill','green');
+				line.p2.svgElement.setAttribute('r',largeCircleSize);
+			}
+			var animationTime = 300;
+			listOfLines.forEach(function(line, index){
+				setTimeout(changePoint, (number-index)*animationTime/number, line);
+				setTimeout(changeLine, (number-index+0.2)*animationTime/number, line);
+			});
+
+			/*listOfPoints.forEach(function(point){
+			point.svgElement.setAttribute('fill','green');
+			point.svgElement.setAttribute('r',largeCircleSize);
+			});*/
+		}
+      
     }
   }
   updateLengthBars();
