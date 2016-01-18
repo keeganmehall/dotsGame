@@ -281,7 +281,7 @@ var calculatePoints = function(){
         circleSVG.id = i;
         svgOverlay.setAttribute('cx',randomx)//set circle x position
         svgOverlay.setAttribute('cy',randomy)//set circle y position
-        svgOverlay.setAttribute('r', '50');      //set circle radius
+        svgOverlay.setAttribute('r', '25');      //set circle radius
         svgOverlay.setAttribute('opacity', '0');
         svgOverlay.id = i;
         
