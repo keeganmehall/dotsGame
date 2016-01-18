@@ -83,8 +83,9 @@ var circleClickHandler = function(){
       lineSVG.setAttribute('x2',line.x2)
       lineSVG.setAttribute('y2',line.y2)
     svg.appendChild(lineSVG)
-    svg.appendChild(listOfPoints[index].svgElement)
-    svg.appendChild(listOfLines[prevIndex].p2.svgElement)
+    svg.appendChild(listOfPoints[index].svgElement);
+    svg.appendChild(listOfLines[prevIndex].p2.svgElement);
+    svg.appendChild(listOfLines[prevIndex].p2.svgOverlay);
     listOfPoints[index].state = 'connected'
     
     calcPathLength()
@@ -253,6 +254,7 @@ var calculatePoints = function(){
   
         //create single dot
         var circleSVG = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        var svgOverlay = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         if (i === 0){
         	var pointType =	'start';
           var pointState = 'start';
@@ -264,18 +266,25 @@ var calculatePoints = function(){
           	var pointState = 'unconnected';
         }
             
-        var circle = {svgElement:circleSVG, x:randomx, y:randomy, type:pointType, state:pointState}
+        var circle = {svgOverlay:svgOverlay, svgElement:circleSVG, x:randomx, y:randomy, type:pointType, state:pointState}
         listOfPoints.push(circle)
         circleSVG.setAttribute('cx',randomx)//set circle x position
         circleSVG.setAttribute('cy',randomy)//set circle y position
         circleSVG.setAttribute('r',circleSize)      //set circle radius
         circleSVG.id = i;
+        svgOverlay.setAttribute('cx',randomx)//set circle x position
+        svgOverlay.setAttribute('cy',randomy)//set circle y position
+        svgOverlay.setAttribute('r', '50');      //set circle radius
+        svgOverlay.setAttribute('opacity', '0');
+        svgOverlay.id = i;
         
         //add circle to svg image which is the svg tag in the html box
-        svg.appendChild(circleSVG)
+        svg.appendChild(circleSVG);
+        svg.appendChild(svgOverlay);
+        
         
         //make it so that the functon circleClickHandler rund when a circle is clicked
-        circleSVG.addEventListener('click',circleClickHandler)
+        svgOverlay.addEventListener('click',circleClickHandler)
         i++
     }
     i=0
