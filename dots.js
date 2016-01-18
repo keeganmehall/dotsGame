@@ -291,7 +291,8 @@ var calculatePoints = function(){
         
         
         //make it so that the functon circleClickHandler rund when a circle is clicked
-        svgOverlay.addEventListener('click',circleClickHandler)
+        svgOverlay.addEventListener('click',circleClickHandler);
+        circleSVG.addEventListener('click',circleClickHandler);
         i++
     }
     i=0
