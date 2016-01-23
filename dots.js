@@ -3,6 +3,7 @@ var forwardButton = document.getElementById('forwardButton');
 var resetButton = document.getElementById('reset');
 var undoButton = document.getElementById('undo');
 var svg = document.getElementById('svg');
+var outerSVG = document.getElementById('outerSVG');
 //var timer = document.getElementById('timer');
 var defaultNumInput = document.getElementById('defaultNumInput');
 var lengthBar = document.getElementById('lengthBar');
@@ -24,6 +25,7 @@ var lengthTable;
 var circleSize = 10;
 var lineWidth = 2;
 var mobile = false;
+var scale = 1;
 
 if(/mobi|android|touch|mini/i.test(navigator.userAgent.toLowerCase())){
 	mobile = true;
@@ -34,19 +36,20 @@ if(/mobi|android|touch|mini/i.test(navigator.userAgent.toLowerCase())){
 }
 
 var setScale = function(){
-	var scale = Math.min(window.innerHeight/480 , window.innerWidth/480);
+	scale = Math.min(window.innerHeight/480 , window.innerWidth/480);
 	document.body.style.transform = 'scale(' + scale + ')';
 	document.body.style.webkittransform = 'scale(' + scale + ')';
 }
 if(mobile){
 	window.addEventListener("resize", setScale)
 }
-    
-//this function describes what should happen when the user clicks on a circle
 var circleClickHandler = function(){
+	circleEventHandler(this.id);
+}    
+//this function describes what should happen when the user clicks on a circle
+var circleEventHandler = function(index){
     //get clicked circle position 
     //(the event handler is attached to the circle element so 'this' references the circle element)
-  var index = this.id;
   if (listOfPoints[index].type === 'end' && listOfLines.length === number - 1){
     listOfPoints[index].state = 'unconnected'
   }
@@ -130,6 +133,36 @@ var circleClickHandler = function(){
   }
   updateLengthBars();
 }
+
+var touchHandler = function(evt){
+	evt.preventDefault();
+	//console.log(pointCoordinates[0].x,pointCoordinates[0].y);
+	//console.log("touch", (evt.touches[0].pageX-svg.getBoundingClientRect().left)/scale, (evt.touches[0].pageY-svg.getBoundingClientRect().top)/scale);
+	var x = (evt.touches[0].pageX-svg.getBoundingClientRect().left)/scale;
+	var y = (evt.touches[0].pageY-svg.getBoundingClientRect().top)/scale;
+	if(0<x && x<430 && 0<y && y<430){
+		var closestIndex;
+		var closestLength = Infinity;
+		var distance = function(idx){
+			return Math.pow(x-pointCoordinates[idx].x,2) + Math.pow(y-pointCoordinates[idx].y,2);
+		}
+		for(var i=0; i<number; i++){
+			var dist = distance(i);
+			//console.log(dist, closestLength, i)
+			if(dist < closestLength && dist < 2500){
+				closestLength = dist;
+				closestIndex = i;
+			}
+		}
+		//console.log(closestIndex);
+		if(closestIndex){
+			circleEventHandler(closestIndex);
+		}
+	}
+}
+
+outerSVG.addEventListener("touchstart" , touchHandler, true);
+outerSVG.addEventListener("touchmove" , touchHandler, true);
 
 var storeBest = function (){
   best = calcPathLength()
