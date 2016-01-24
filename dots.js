@@ -83,10 +83,7 @@ var circleEventHandler = function(index){
       lineSVG.setAttribute('y1',line.y1)
       lineSVG.setAttribute('x2',line.x2)
       lineSVG.setAttribute('y2',line.y2)
-    svg.appendChild(lineSVG)
-    svg.appendChild(listOfPoints[index].svgElement);
-    svg.appendChild(listOfLines[prevIndex].p2.svgElement);
-    svg.appendChild(listOfLines[prevIndex].p2.svgOverlay);
+    svg.insertBefore(lineSVG, listOfPoints[0].svgElement);
     listOfPoints[index].state = 'connected';
     if (listOfLines.length === number - 1){
     	listOfPoints[1].state = 'unconnected'
