@@ -9,6 +9,9 @@ var defaultNumInput = document.getElementById('defaultNumInput');
 var lengthBar = document.getElementById('lengthBar');
 var bestBar = document.getElementById('bestBar');
 var backButton = document.getElementById('backButton');
+var shareURL = document.getElementById('URL');
+var popupDiv = document.getElementById('popupDiv');
+var message = document.getElementById('message');
 var defaultNumber = 12;
 var number = defaultNumber;
 var pathLength = 0;
@@ -26,6 +29,7 @@ var circleSize = 10;
 var lineWidth = 2;
 var mobile = false;
 var scale = 1;
+var startTime;
 
 if(/mobi|android|touch|mini/i.test(navigator.userAgent.toLowerCase())){
 	mobile = true;
@@ -91,19 +95,20 @@ var circleEventHandler = function(index){
     
     calcPathLength()
     if (listOfPoints[index].type === 'end'){
+    	var time = (new Date()-startTime)/1000;
+		var percentShorter = (100*(pathLength-perfectLength)/pathLength);
 		if(best && !isNaN(best) && pathLength - best > 0.01){
-			console.log('finished, but you have done better');
+			message.textContent = 'You finished, but you have done better. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
+			//shareURL.textContent = window.location;
+			popupDiv.setAttribute('style', 'display: block');
 		}else if(best && !isNaN(best) && Math.abs(pathLength-best) < 0.01){
-			console.log('same best path');
-		}
-		if(pathLength < best || isNaN(best) || !best){
-			console.log('new best path');
+			message.textContent = 'This is the same as your last best path. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
+			//shareURL.textContent = window.location;
+			popupDiv.setAttribute('style', 'display: block');
+		}else if(pathLength-perfectLength<0.01){
 			storeBest();
 			bestBar.setAttribute('y', 424-barHeight());
 			bestBar.setAttribute('height', barHeight());
-      	}
-		if(pathLength-perfectLength<0.01){
-			console.log('solved', 'error =', Math.abs(pathLength-perfectLength));
 			bestBar.setAttribute('fill','green');          
 			lengthBar.setAttribute('fill','green');
 			var largeLineWidth = lineWidth*1.5;
@@ -120,12 +125,26 @@ var circleEventHandler = function(index){
 				setTimeout(changePoint, (number-index)*animationTime/number, line);
 				setTimeout(changeLine, (number-index+0.2)*animationTime/number, line);
 			});
+			
+			setTimeout(function(){
+				message.textContent = 'Congratulations, you found the best path in ' + Math.round(time) + ' seconds. To share this board, send the URL of this page.';
+				//shareURL.textContent = window.location;
+				popupDiv.style.display = 'block';
+			}, animationTime);
 
 			/*listOfPoints.forEach(function(point){
 			point.svgElement.setAttribute('fill','green');
 			point.svgElement.setAttribute('r',largeCircleSize);
 			});*/
-		}
+		}else if(pathLength < best || isNaN(best) || !best){
+			storeBest();
+			bestBar.setAttribute('y', 424-barHeight());
+			bestBar.setAttribute('height', barHeight());
+			message.textContent = 'This is your shortest path yet, but the best one is ' + percentShorter.toPrecision(2) +'% shorter';
+			//shareURL.textContent = window.location;
+			popupDiv.setAttribute('style', 'display: block');
+      	}
+		
       
     }
   }
@@ -177,6 +196,7 @@ var calcPathLength = function(){
 }
 
 resetButton.addEventListener('click',function(){
+    popupDiv.setAttribute('style', 'display:none');
     listOfLines.forEach(function(line){
         svg.removeChild(line.svgElement)
     })
@@ -202,6 +222,7 @@ var length = function(line){
 }
 
 undoButton.addEventListener('click',function(){
+    popupDiv.setAttribute('style', 'display:none');
     if (listOfLines.length > 1){
         var lineDescriptor = listOfLines[listOfLines.length-1]
         svg.removeChild(lineDescriptor.svgElement);
@@ -342,10 +363,12 @@ var calculatePoints = function(){
 	if(number < 14){console.log(difficulty(perfectLength*1.1), 'paths within 10%')};	
 	console.log('total angle:', pathAngles(), 'radians');
 	console.log('perfectLength', perfectLength);
+	startTime = new Date();
 	
 }
 
 var calculateHandler = function(){
+  popupDiv.setAttribute('style', 'display:none');
   var newDefaultNumber = parseInt(defaultNumInput.value,10);
   if(newDefaultNumber > 18){
   	defaultNumber = 18;
@@ -638,6 +661,7 @@ window.addEventListener('hashchange', function(){
 })
 
 forwardButton.addEventListener('click', function(){
+	popupDiv.setAttribute('style', 'display:none');
 	if(listOfBoards[boardIndex+1]){
 		boardIndex += 1;
 		pointCoordinates = listOfBoards[boardIndex];
@@ -649,6 +673,7 @@ forwardButton.addEventListener('click', function(){
 });
 
 backButton.addEventListener('click',function(){
+	popupDiv.setAttribute('style', 'display:none');
 	if(listOfBoards[boardIndex-1]){
 		boardIndex -= 1;
 		pointCoordinates = listOfBoards[boardIndex];
