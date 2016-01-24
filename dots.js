@@ -50,9 +50,7 @@ var circleClickHandler = function(){
 var circleEventHandler = function(index){
     //get clicked circle position 
     //(the event handler is attached to the circle element so 'this' references the circle element)
-  if (listOfPoints[index].type === 'end' && listOfLines.length === number - 1){
-    listOfPoints[index].state = 'unconnected'
-  }
+
   if(listOfPoints[index].state === 'unconnected'){
       pointDescriptor = listOfPoints[index]
     var x = pointDescriptor.x
@@ -89,7 +87,10 @@ var circleEventHandler = function(index){
     svg.appendChild(listOfPoints[index].svgElement);
     svg.appendChild(listOfLines[prevIndex].p2.svgElement);
     svg.appendChild(listOfLines[prevIndex].p2.svgOverlay);
-    listOfPoints[index].state = 'connected'
+    listOfPoints[index].state = 'connected';
+    if (listOfLines.length === number - 1){
+    	listOfPoints[1].state = 'unconnected'
+  	}
     
     calcPathLength()
     if (listOfPoints[index].type === 'end'){
@@ -149,7 +150,7 @@ var touchHandler = function(evt){
 		for(var i=0; i<number; i++){
 			var dist = distance(i);
 			//console.log(dist, closestLength, i)
-			if(dist < closestLength && dist < 2500){
+			if(dist < closestLength && dist < 2500 && listOfPoints[i].state === 'unconnected'){
 				closestLength = dist;
 				closestIndex = i;
 			}
