@@ -160,6 +160,12 @@ var showPopupDiv = function(){
 	}
 	popupDiv.style.display = 'block';
 }
+var hidePopupDiv = function(){
+	outerSVG.style.filter = '';
+	outerSVG.style.webkitFilter = '';
+	popupDiv.style.backgroundColor = 'rgba(255,255,255,0)';
+	popupDiv.style.display = 'none'
+}
 
 
 var touchHandler = function(evt){
@@ -207,7 +213,7 @@ var calcPathLength = function(){
 }
 
 resetButton.addEventListener('click',function(){
-    popupDiv.setAttribute('style', 'display:none');
+    hidePopupDiv();
     listOfLines.forEach(function(line){
         svg.removeChild(line.svgElement)
     })
@@ -233,7 +239,7 @@ var length = function(line){
 }
 
 undoButton.addEventListener('click',function(){
-    popupDiv.setAttribute('style', 'display:none');
+    hidePopupDiv();
     if (listOfLines.length > 1){
         var lineDescriptor = listOfLines[listOfLines.length-1]
         svg.removeChild(lineDescriptor.svgElement);
@@ -379,7 +385,7 @@ var calculatePoints = function(){
 }
 
 var calculateHandler = function(){
-  popupDiv.setAttribute('style', 'display:none');
+  hidePopupDiv();
   var newDefaultNumber = parseInt(defaultNumInput.value,10);
   if(newDefaultNumber > 18){
   	defaultNumber = 18;
@@ -672,7 +678,7 @@ window.addEventListener('hashchange', function(){
 })
 
 forwardButton.addEventListener('click', function(){
-	popupDiv.setAttribute('style', 'display:none');
+	hidePopupDiv();
 	if(listOfBoards[boardIndex+1]){
 		boardIndex += 1;
 		pointCoordinates = listOfBoards[boardIndex];
@@ -684,7 +690,7 @@ forwardButton.addEventListener('click', function(){
 });
 
 backButton.addEventListener('click',function(){
-	popupDiv.setAttribute('style', 'display:none');
+	hidePopupDiv();
 	if(listOfBoards[boardIndex-1]){
 		boardIndex -= 1;
 		pointCoordinates = listOfBoards[boardIndex];
