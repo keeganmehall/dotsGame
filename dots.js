@@ -219,6 +219,8 @@ var calcPathLength = function(){
 
 resetButton.addEventListener('click',function(){
     hidePopupDiv();
+    bestBar.setAttribute('fill','#adadff');
+    lengthBar.setAttribute('fill', 'blue');
     listOfLines.forEach(function(line){
         svg.removeChild(line.svgElement)
     })
