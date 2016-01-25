@@ -29,12 +29,24 @@
 	background-color:rgba(255,255,255,0);
 	text-align:center;
 	vertical-align:middle;
+	opacity: 0;
+	transition: opacity 0.4s;
+	-webkit-transition: opacity 0.4s;
+}
+
+#outerSVG{
+	transition: filter 0.4s;
+	-webkit-transition: filter 0.4s;
 }
 
 #boardDiv{
 	position:relative;
 }
 
+#lengthBar{
+	transition: fill 0.3s;
+	-webkit-transition: fill 0.3s;
+}
 
 }
 

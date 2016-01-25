@@ -101,10 +101,12 @@ var circleEventHandler = function(index){
     	var time = (new Date()-startTime)/1000;
 		var percentShorter = (100*(pathLength-perfectLength)/pathLength);
 		if(pathLength-perfectLength<0.01){
+			var animationTime = 300;
 			storeBest();
 			bestBar.setAttribute('y', 424-barHeight());
 			bestBar.setAttribute('height', barHeight());
 			bestBar.setAttribute('fill','green');          
+			lengthBar.transiton = 'fill ' + animationTime/1000+'s';
 			lengthBar.setAttribute('fill','green');
 			var largeLineWidth = lineWidth*1.5;
 			var largeCircleSize = circleSize*1.2;
@@ -115,7 +117,6 @@ var circleEventHandler = function(index){
 				line.p2.svgElement.setAttribute('fill','green');
 				line.p2.svgElement.setAttribute('r',largeCircleSize);
 			}
-			var animationTime = 300;
 			listOfLines.forEach(function(line, index){
 				setTimeout(changePoint, (number-index)*animationTime/number, line);
 				setTimeout(changeLine, (number-index+0.2)*animationTime/number, line);
@@ -125,7 +126,7 @@ var circleEventHandler = function(index){
 			setTimeout(function(){
 				//shareURL.textContent = window.location;
 				showPopupDiv();
-			}, animationTime);
+			}, animationTime/2);
 
 			/*listOfPoints.forEach(function(point){
 			point.svgElement.setAttribute('fill','green');
@@ -161,12 +162,14 @@ var showPopupDiv = function(){
 		popupDiv.style.backgroundColor = 'rgba(255,255,255,0.8)';
 	}
 	popupDiv.style.display = 'block';
+	setTimeout(function(){popupDiv.style.opacity = 1},5);
 }
 var hidePopupDiv = function(){
 	outerSVG.style.filter = '';
 	outerSVG.style.webkitFilter = '';
 	popupDiv.style.backgroundColor = 'rgba(255,255,255,0)';
-	popupDiv.style.display = 'none'
+	popupDiv.style.opacity = 0;
+	setTimeout(function(){popupDiv.style.display = 'none'}, 400);
 }
 
 
@@ -242,6 +245,8 @@ var length = function(line){
 
 undoButton.addEventListener('click',function(){
     hidePopupDiv();
+    bestBar.setAttribute('fill','#adadff');
+    lengthBar.setAttribute('fill', 'blue');
     if (listOfLines.length > 1){
         var lineDescriptor = listOfLines[listOfLines.length-1]
         svg.removeChild(lineDescriptor.svgElement);
