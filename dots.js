@@ -219,7 +219,6 @@ var calcPathLength = function(){
 
 resetButton.addEventListener('click',function(){
     hidePopupDiv();
-    bestBar.setAttribute('fill','#adadff');
     lengthBar.setAttribute('fill', 'blue');
     listOfLines.forEach(function(line){
         svg.removeChild(line.svgElement)
@@ -247,7 +246,6 @@ var length = function(line){
 
 undoButton.addEventListener('click',function(){
     hidePopupDiv();
-    bestBar.setAttribute('fill','#adadff');
     lengthBar.setAttribute('fill', 'blue');
     if (listOfLines.length > 1){
         var lineDescriptor = listOfLines[listOfLines.length-1]
