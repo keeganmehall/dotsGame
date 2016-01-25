@@ -12,6 +12,7 @@ var backButton = document.getElementById('backButton');
 var shareURL = document.getElementById('URL');
 var popupDiv = document.getElementById('popupDiv');
 var message = document.getElementById('message');
+var outerSVG = document.getElementById('outerSVG');
 var defaultNumber = 12;
 var number = defaultNumber;
 var pathLength = 0;
@@ -118,10 +119,10 @@ var circleEventHandler = function(index){
 				setTimeout(changeLine, (number-index+0.2)*animationTime/number, line);
 			});
 			
+			message.textContent = 'Congratulations, you found the best path in ' + Math.round(time) + ' seconds. To share this board, send the URL of this page.';
 			setTimeout(function(){
-				message.textContent = 'Congratulations, you found the best path in ' + Math.round(time) + ' seconds. To share this board, send the URL of this page.';
 				//shareURL.textContent = window.location;
-				popupDiv.style.display = 'block';
+				showPopupDiv();
 			}, animationTime);
 
 			/*listOfPoints.forEach(function(point){
@@ -131,18 +132,18 @@ var circleEventHandler = function(index){
 		}else if(best && !isNaN(best) && pathLength - best > 0.01){
 			message.textContent = 'You finished, but you have done better. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
 			//shareURL.textContent = window.location;
-			popupDiv.setAttribute('style', 'display: block');
+			showPopupDiv();
 		}else if(best && !isNaN(best) && Math.abs(pathLength-best) < 0.01){
 			message.textContent = 'This is the same as your last best path. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
 			//shareURL.textContent = window.location;
-			popupDiv.setAttribute('style', 'display: block');
+			showPopupDiv();
 		}else if(pathLength < best || isNaN(best) || !best){
 			storeBest();
 			bestBar.setAttribute('y', 424-barHeight());
 			bestBar.setAttribute('height', barHeight());
 			message.textContent = 'This is your shortest path yet, but the best one is ' + percentShorter.toPrecision(2) +'% shorter';
 			//shareURL.textContent = window.location;
-			popupDiv.setAttribute('style', 'display: block');
+			showPopupDiv();
       	}
 		
       
@@ -150,6 +151,16 @@ var circleEventHandler = function(index){
   }
   updateLengthBars();
 }
+
+var showPopupDiv = function(){
+	outerSVG.style.filter = 'blur(3px) opacity(40%)';
+	outerSVG.style.webkitFilter = 'blur(3px) opacity(40%)';
+	if(outerSVG.style.filter !== 'blur(3px) opacity(40%)' && outerSVG.style.webkitFilter !== 'blur(3px) opacity(40%)'){
+		popupDiv.style.backgroundColor = 'rgba(255,255,255,0.8)';
+	}
+	popupDiv.style.display = 'block';
+}
+
 
 var touchHandler = function(evt){
 	evt.preventDefault();
