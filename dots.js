@@ -44,6 +44,8 @@ var setScale = function(){
 	scale = Math.min(window.innerHeight/480 , window.innerWidth/480);
 	document.body.style.transform = 'scale(' + scale + ')';
 	document.body.style.webkittransform = 'scale(' + scale + ')';
+	document.body.style.transformOrigin = '0 0';
+	document.body.style.webkitTransformOrigin = '0 0';
 }
 if(mobile){
 	window.addEventListener("resize", setScale)
