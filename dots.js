@@ -97,15 +97,7 @@ var circleEventHandler = function(index){
     if (listOfPoints[index].type === 'end'){
     	var time = (new Date()-startTime)/1000;
 		var percentShorter = (100*(pathLength-perfectLength)/pathLength);
-		if(best && !isNaN(best) && pathLength - best > 0.01){
-			message.textContent = 'You finished, but you have done better. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
-			//shareURL.textContent = window.location;
-			popupDiv.setAttribute('style', 'display: block');
-		}else if(best && !isNaN(best) && Math.abs(pathLength-best) < 0.01){
-			message.textContent = 'This is the same as your last best path. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
-			//shareURL.textContent = window.location;
-			popupDiv.setAttribute('style', 'display: block');
-		}else if(pathLength-perfectLength<0.01){
+		if(pathLength-perfectLength<0.01){
 			storeBest();
 			bestBar.setAttribute('y', 424-barHeight());
 			bestBar.setAttribute('height', barHeight());
@@ -136,6 +128,14 @@ var circleEventHandler = function(index){
 			point.svgElement.setAttribute('fill','green');
 			point.svgElement.setAttribute('r',largeCircleSize);
 			});*/
+		}else if(best && !isNaN(best) && pathLength - best > 0.01){
+			message.textContent = 'You finished, but you have done better. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
+			//shareURL.textContent = window.location;
+			popupDiv.setAttribute('style', 'display: block');
+		}else if(best && !isNaN(best) && Math.abs(pathLength-best) < 0.01){
+			message.textContent = 'This is the same as your last best path. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
+			//shareURL.textContent = window.location;
+			popupDiv.setAttribute('style', 'display: block');
 		}else if(pathLength < best || isNaN(best) || !best){
 			storeBest();
 			bestBar.setAttribute('y', 424-barHeight());
