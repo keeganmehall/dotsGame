@@ -247,11 +247,12 @@ undoButton.addEventListener('click',function(){
         svg.removeChild(lineDescriptor.svgElement);
         lineDescriptor.p2.svgElement.setAttribute('r',circleSize);
 		if (lineDescriptor.p2.type === 'end'){
-		    lineDescriptor.p2.svgElement.setAttribute('fill','red')
-		    lineDescriptor.p2.state = 'end'
+		    lineDescriptor.p2.svgElement.setAttribute('fill','red');
+		    lineDescriptor.p2.state = 'unconnected';
 		} else{
-		    lineDescriptor.p2.svgElement.setAttribute('fill','black')
-		    lineDescriptor.p2.state = 'unconnected'
+		    lineDescriptor.p2.svgElement.setAttribute('fill','black');
+		    lineDescriptor.p2.state = 'unconnected';
+		    listOfPoints[1].state = 'end'
 		}
 		if(listOfLines.length === 2){
 			listOfPoints[0].svgElement.setAttribute('r',circleSize);
