@@ -156,9 +156,9 @@ var circleEventHandler = function(index){
 }
 
 var showPopupDiv = function(){
-	outerSVG.style.filter = 'blur(3px) opacity(40%)';
-	outerSVG.style.webkitFilter = 'blur(3px) opacity(40%)';
-	if(outerSVG.style.filter !== 'blur(3px) opacity(40%)' && outerSVG.style.webkitFilter !== 'blur(3px) opacity(40%)'){
+	outerSVG.style.filter = 'blur(2px) opacity(50%)';
+	outerSVG.style.webkitFilter = 'blur(2px) opacity(50%)';
+	if(outerSVG.style.filter !== 'blur(2px) opacity(50%)' && outerSVG.style.webkitFilter !== 'blur(2px) opacity(50%)'){
 		popupDiv.style.backgroundColor = 'rgba(255,255,255,0.8)';
 	}
 	popupDiv.style.display = 'block';
