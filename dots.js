@@ -172,7 +172,8 @@ var hidePopupDiv = function(){
 	setTimeout(function(){popupDiv.style.display = 'none'}, 400);
 }
 
-
+var oldCoordinates;
+var timeOfLastTouchMove;
 var touchHandler = function(evt){
 	evt.preventDefault();
 	//console.log(pointCoordinates[0].x,pointCoordinates[0].y);
@@ -197,6 +198,12 @@ var touchHandler = function(evt){
 		if(closestIndex){
 			circleEventHandler(closestIndex);
 		}
+		var currentTime = new Date();
+		
+		var speedSquared = (Math.pow(x-oldCoordinates[0],2)+Math.pow(y-oldCoordinates[1],2))/(Math.pow(currentTime - timeOfLastTouchMove, 2));
+		
+		timeOfLastTouchMove = currentTime;
+		oldCoordinates = [x,y];
 	}
 }
 
@@ -664,7 +671,7 @@ var calcBestPath = function(){
 }
 
 var barHeight = function(){
-	var height = 10+(pathLength*408/(1.5*perfectLength));
+	var height = 6+(pathLength*412/(1.5*perfectLength));
   if (height > 418){
   	return 418;
   }else{return height}
