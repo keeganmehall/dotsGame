@@ -568,7 +568,7 @@ var retrieve = function(string){
   if(string.length>52){
   	string = string.slice(0,52);
   }
-  if(string.length > 13){
+  if(string.length > 12){
     var oldNumber = number;
     number = Math.floor((string.length-4)/3);
     var checksum = 0
