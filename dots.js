@@ -72,6 +72,8 @@ var circleEventHandler = function(index){
 
       //draw line from previous point to currently clicked point
     var lineSVG = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    lineSVG.style.transition = 'filter 0.4s';
+    lineSVG.style.webkitTransition = 'filter 0.4s';
     var prevIndex = listOfLines.length-1;
 
       var line = {
@@ -111,7 +113,8 @@ var circleEventHandler = function(index){
 			var largeLineWidth = lineWidth*1.5;
 			var largeCircleSize = circleSize*1.2;
 			var changeLine = function(line){
-				line.svgElement.setAttribute("style","stroke:green;stroke-width:" + largeLineWidth);
+				line.svgElement.style.stroke = 'green';
+				line.svgElement.style.strokeWidth = largeLineWidth;
 			}
 			var changePoint = function(line){
 				line.p2.svgElement.setAttribute('fill','green');
@@ -156,17 +159,34 @@ var circleEventHandler = function(index){
 }
 
 var showPopupDiv = function(){
-	outerSVG.style.filter = 'blur(2px) opacity(50%)';
-	outerSVG.style.webkitFilter = 'blur(2px) opacity(50%)';
-	if(outerSVG.style.filter !== 'blur(2px) opacity(50%)' && outerSVG.style.webkitFilter !== 'blur(2px) opacity(50%)'){
+	for(var i = 0; i<number; i++){
+		listOfPoints[i].svgElement.transition = 'filter 0.4s';
+		listOfPoints[i].svgElement.webkitTransition = 'filter 0.4s';
+		listOfPoints[i].svgElement.style.filter = 'blur(2px)';
+		listOfPoints[i].svgElement.style.webkitFilter = 'blur(2px)';
+	}
+	for(var i= 1; i < listOfLines.length; i++){
+		listOfLines[i].svgElement.transition = 'filter 0.4s';
+		listOfLines[i].svgElement.webkitTransition = 'filter 0.4s';
+		listOfLines[i].svgElement.style.filter = 'blur(1.5px)';
+		listOfLines[i].svgElement.style.webkitFilter = 'blur(1px)';
+	}
+	popupDiv.style.backgroundColor = 'rgba(255,255,255,0.5)';
+	if(listOfPoints[0].svgElement.style.filter !== 'blur(2px)' && listOfPoints[0].svgElement.style.webkitFilter !== 'blur(2px)'){
 		popupDiv.style.backgroundColor = 'rgba(255,255,255,0.8)';
 	}
 	popupDiv.style.display = 'block';
 	setTimeout(function(){popupDiv.style.opacity = 1},5);
 }
 var hidePopupDiv = function(){
-	outerSVG.style.filter = '';
-	outerSVG.style.webkitFilter = '';
+	for(var i = 0; i<number; i++){
+		listOfPoints[i].svgElement.style.filter = 'none';
+		listOfPoints[i].svgElement.style.webkitFilter = 'none';
+	}
+	for(var i= 1; i < listOfLines.length; i++){
+		listOfLines[i].svgElement.style.filter = 'none';
+		listOfLines[i].svgElement.style.filter = 'none';
+	}
 	popupDiv.style.backgroundColor = 'rgba(255,255,255,0)';
 	popupDiv.style.opacity = 0;
 	setTimeout(function(){popupDiv.style.display = 'none'}, 400);
@@ -363,6 +383,9 @@ var calculatePoints = function(){
         circleSVG.setAttribute('cy',randomy)//set circle y position
         circleSVG.setAttribute('r',circleSize)      //set circle radius
         circleSVG.id = i;
+        circleSVG.className += 'dotOrLine';
+        circleSVG.style.transition = 'filter 0.4s';
+        circleSVG.style.webkitTransition = 'filter 0.4s';
         svgOverlay.setAttribute('cx',randomx)//set circle x position
         svgOverlay.setAttribute('cy',randomy)//set circle y position
         svgOverlay.setAttribute('r', '25');      //set circle radius

@@ -23,7 +23,7 @@
 	display:none;
 	top:0;
 	left:0;
-	width:470px;
+	width:430px;
 	height:330px;
 	position:absolute;
 	background-color:rgba(255,255,255,0);
@@ -34,7 +34,7 @@
 	-webkit-transition: opacity 0.4s;
 }
 
-#outerSVG{
+.dotOrLine{
 	transition: filter 0.4s;
 	-webkit-transition: filter 0.4s;
 }
