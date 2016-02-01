@@ -3,7 +3,7 @@ var forwardButton = document.getElementById('forwardButton');
 var resetButton = document.getElementById('reset');
 var undoButton = document.getElementById('undo');
 var svg = document.getElementById('svg');
-var outerSVG = document.getElementById('outerSVG');
+//var outerSVG = document.getElementById('outerSVG');
 //var timer = document.getElementById('timer');
 var defaultNumInput = document.getElementById('defaultNumInput');
 var lengthBar = document.getElementById('lengthBar');
@@ -12,7 +12,6 @@ var backButton = document.getElementById('backButton');
 var shareURL = document.getElementById('URL');
 var popupDiv = document.getElementById('popupDiv');
 var message = document.getElementById('message');
-var outerSVG = document.getElementById('outerSVG');
 var defaultNumber = 12;
 var number = defaultNumber;
 var pathLength = 0;
@@ -156,17 +155,17 @@ var circleEventHandler = function(index){
 }
 
 var showPopupDiv = function(){
-	outerSVG.style.filter = 'blur(2px) opacity(50%)';
-	outerSVG.style.webkitFilter = 'blur(2px) opacity(50%)';
-	if(outerSVG.style.filter !== 'blur(2px) opacity(50%)' && outerSVG.style.webkitFilter !== 'blur(2px) opacity(50%)'){
+	svg.style.filter = 'blur(2px) opacity(50%)';
+	svg.style.webkitFilter = 'blur(2px) opacity(50%)';
+	if(svg.style.filter !== 'blur(2px) opacity(50%)' && svg.style.webkitFilter !== 'blur(2px) opacity(50%)'){
 		popupDiv.style.backgroundColor = 'rgba(255,255,255,0.8)';
 	}
 	popupDiv.style.display = 'block';
 	setTimeout(function(){popupDiv.style.opacity = 1},5);
 }
 var hidePopupDiv = function(){
-	outerSVG.style.filter = '';
-	outerSVG.style.webkitFilter = '';
+	svg.style.filter = '';
+	svg.style.webkitFilter = '';
 	popupDiv.style.backgroundColor = 'rgba(255,255,255,0)';
 	popupDiv.style.opacity = 0;
 	setTimeout(function(){popupDiv.style.display = 'none'}, 400);
@@ -207,8 +206,8 @@ var touchHandler = function(evt){
 	}
 }
 
-outerSVG.addEventListener("touchstart" , touchHandler, true);
-outerSVG.addEventListener("touchmove" , touchHandler, true);
+boardDiv.addEventListener("touchstart" , touchHandler, true);
+boardDiv.addEventListener("touchmove" , touchHandler, true);
 
 var storeBest = function (){
   best = calcPathLength()
