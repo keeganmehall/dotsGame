@@ -41,6 +41,7 @@
 
 #boardDiv{
 	position:relative;
+	white-space:nowrap;
 }
 
 #lengthBar{
