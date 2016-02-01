@@ -155,9 +155,9 @@ var circleEventHandler = function(index){
 }
 
 var showPopupDiv = function(){
-	svg.style.filter = 'blur(2px) opacity(50%)';
-	svg.style.webkitFilter = 'blur(2px) opacity(50%)';
-	if(svg.style.filter !== 'blur(2px) opacity(50%)' && svg.style.webkitFilter !== 'blur(2px) opacity(50%)'){
+	svg.style.filter = 'blur(1.5px) opacity(50%)';
+	svg.style.webkitFilter = 'blur(1.5px) opacity(50%)';
+	if(svg.style.filter !== 'blur(1.5px) opacity(50%)' && svg.style.webkitFilter !== 'blur(1.5px) opacity(50%)'){
 		popupDiv.style.backgroundColor = 'rgba(255,255,255,0.8)';
 	}
 	popupDiv.style.display = 'block';
