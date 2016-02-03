@@ -154,7 +154,16 @@ var circleEventHandler = function(index){
   updateLengthBars();
 }
 
+var svgElementFilters = function(){
+	var lengthBarsBackground = document.getElementById('lengthBarsBackground');
+	lengthBarsBackground.style.filter='opacity(0.99%)';
+	lengthBarsBackground.setAttribute('style', '-webkit-filter:opacity(0.99%)');
+	console.log(lengthBarsBackground.style);
+}
+
 var showPopupDiv = function(){
+	setTimeout(function(){svg.style.animationPlayState = 'paused'},1000);
+	svg.style.animationPlayState = 'running';
 	svg.style.animationDirection = 'reverse';
 	svg.style.animationFillMode = 'both';
 	svg.style.animationName = 'blur';
@@ -166,6 +175,13 @@ var showPopupDiv = function(){
 	setTimeout(function(){popupDiv.style.opacity = 1},5);
 }
 var hidePopupDiv = function(){
+	setTimeout(function(){
+		svg.style.animationPlayState = 'paused';
+		svg.style.filter = 'none';
+		svg.style.webkitFilter = 'none';
+		svg.style.opacity = '1';
+	},500);
+	svg.style.animationPlayState = 'running';
 	svg.style.animationDirection = 'normal';
 	svg.style.animationFillMode = 'both';
 	svg.style.animationName = 'blur';
