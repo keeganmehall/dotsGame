@@ -155,17 +155,22 @@ var circleEventHandler = function(index){
 }
 
 var showPopupDiv = function(){
-	svg.style.filter = 'blur(1.5px) opacity(50%)';
-	svg.style.webkitFilter = 'blur(1.5px) opacity(50%)';
-	if(svg.style.filter !== 'blur(1.5px) opacity(50%)' && svg.style.webkitFilter !== 'blur(1.5px) opacity(50%)'){
-		popupDiv.style.backgroundColor = 'rgba(255,255,255,0.8)';
-	}
+	svg.style.animationDirection = 'reverse';
+	svg.style.animationFillMode = 'both';
+	svg.style.animationName = 'blur';
+	svg.style.animationDuration = '0.4s';
+	//if(svg.style.filter !== 'blur(1.5px) opacity(50%)' && svg.style.webkitFilter !== 'blur(1.5px) opacity(50%)'){
+	//	popupDiv.style.backgroundColor = 'rgba(255,255,255,0.8)';
+	//}
 	popupDiv.style.display = 'block';
 	setTimeout(function(){popupDiv.style.opacity = 1},5);
 }
 var hidePopupDiv = function(){
-	svg.style.filter = '';
-	svg.style.webkitFilter = '';
+	svg.style.animationDirection = 'normal';
+	svg.style.animationFillMode = 'both';
+	svg.style.animationName = 'blur';
+	svg.style.animationDuration = '0.4s';
+	svg.style.animationTimingFunction = 'linear';
 	popupDiv.style.backgroundColor = 'rgba(255,255,255,0)';
 	popupDiv.style.opacity = 0;
 	setTimeout(function(){popupDiv.style.display = 'none'}, 400);

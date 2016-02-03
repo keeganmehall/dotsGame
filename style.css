@@ -14,6 +14,7 @@
 }
 #svg{
 	position:relative;
+	
 }
 #popupDiv{
 	padding-top:50px;
@@ -35,10 +36,12 @@
 	-webkit-transition: opacity 0.4s;
 }
 
-#svg{
+
+
+/*#svg{
 	transition: filter 0.4s;
 	-webkit-transition: filter 0.4s;
-}
+}*/
 
 #boardDiv{
 	position:relative;
@@ -51,6 +54,33 @@
 }
 
 }
+
+@keyframes blur{
+	from{
+		filter:blur(1.5px);
+		-webkit-filter:blur(1.5px);
+		opacity:0.5;
+	}
+	to{
+		filter:none;
+		-webkit-filter:none;
+		opacity:1;
+	}
+}
+
+@-webkit-keyframes blur{
+	from{
+		filter:blur(1.5px);
+		-webkit-filter:blur(1.5px);
+		opacity:0.5;
+	}
+	to{
+		filter:none;
+		-webkit-filter:none;
+		opacity:1;
+	}
+}
+
 
 body{
 	width:470px;
