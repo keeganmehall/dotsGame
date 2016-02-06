@@ -168,6 +168,7 @@ var showPopupDiv = function(){
 	svg.style.animationFillMode = 'both';
 	svg.style.animationName = 'blur';
 	svg.style.animationDuration = '0.4s';
+	svg.blurred = true;
 	//if(svg.style.filter !== 'blur(1.5px) opacity(50%)' && svg.style.webkitFilter !== 'blur(1.5px) opacity(50%)'){
 	//	popupDiv.style.backgroundColor = 'rgba(255,255,255,0.8)';
 	//}
@@ -175,21 +176,14 @@ var showPopupDiv = function(){
 	setTimeout(function(){popupDiv.style.opacity = 1},5);
 }
 var hidePopupDiv = function(){
-	setTimeout(function(){
-		svg.style.animationPlayState = 'paused';
-		svg.style.filter = 'none';
-		svg.style.webkitFilter = 'none';
-		svg.style.opacity = '1';
-	},500);
-	svg.style.animationPlayState = 'running';
-	svg.style.animationDirection = 'normal';
-	svg.style.animationFillMode = 'both';
-	svg.style.animationName = 'blur';
-	svg.style.animationDuration = '0.4s';
-	svg.style.animationTimingFunction = 'linear';
+	svg.style.animation = '';
+	svg.style.filter = 'none';
+	svg.style.webkitFilter = 'none';
+	svg.style.opacity = '1';
 	popupDiv.style.backgroundColor = 'rgba(255,255,255,0)';
 	popupDiv.style.opacity = 0;
 	setTimeout(function(){popupDiv.style.display = 'none'}, 400);
+	svg.blurred = false;
 }
 
 var oldCoordinates;
