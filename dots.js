@@ -97,7 +97,7 @@ var circleEventHandler = function(index){
     
     calcPathLength()
     if (listOfPoints[index].type === 'end'){
-    	var time = (new Date()-startTime)/1000;
+    	var time = (new Date() - pointCoordinates[0].startTime)/1000;
 		var percentShorter = (100*(pathLength-perfectLength)/pathLength);
 		if(pathLength-perfectLength<0.01){
 			var animationTime = 300;
@@ -342,7 +342,7 @@ var genCoordinates = function(){
     pointCoordinates.push(point);
     i++;
   }
-  
+  pointCoordinates[0].startTime = new Date();
   listOfBoards.push(pointCoordinates);
   //console.log(listOfBoards)
   boardIndex++;
@@ -414,7 +414,6 @@ var calculatePoints = function(){
 	if(number < 14){console.log(difficulty(perfectLength*1.1), 'paths within 10%')};	
 	console.log('total angle:', pathAngles(), 'radians');
 	console.log('perfectLength', perfectLength);
-	startTime = new Date();
 	
 }
 
@@ -576,12 +575,12 @@ var retrieve = function(string){
   	}
   	if(checksum === base64ToNum(string.slice(string.length-4))){
   		pointCoordinates = newPointCoordinates;
+  		pointCoordinates[0].startTime = new Date();
   	}else{
   		number = oldNumber;
   		console.log('invalid checksum', checksum, '!==', base64ToNum(string.slice(string.length-4)))
   		return false
   	}
-  	
   	if(listOfBoards[boardIndex-1] !== pointCoordinates && pointCoordinates === newPointCoordinates){
   		listOfBoards.push(pointCoordinates);
   		boardIndex +=1;
