@@ -121,9 +121,10 @@ var circleEventHandler = function(index){
 				setTimeout(changeLine, (number-index+0.2)*animationTime/number, line);
 			});
 			
-			message.textContent = 'Congratulations, you found the best path in ' + Math.round(time) + ' second'
-			if(Math.round(time)!==1){message.textcontent+='s'}
-			message.textContnet += "To share this board, send this page's URL.";
+			var newMessage = 'Congratulations, you found the best path in ' + Math.round(time) + ' second'
+			if(Math.round(time)!==1){newMessage+='s'}
+			newMessage += ". To share this board, send this page's URL.";
+			message.textContent = newMessage;
 			setTimeout(function(){
 				//shareURL.textContent = window.location;
 				showPopupDiv();
