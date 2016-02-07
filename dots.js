@@ -176,6 +176,7 @@ var showPopupDiv = function(){
 	setTimeout(function(){popupDiv.style.opacity = 1},5);
 }
 var hidePopupDiv = function(){
+	svg.style.animationPlayState = 'paused';
 	svg.style.animation = '';
 	svg.style.filter = 'none';
 	svg.style.webkitFilter = 'none';
@@ -345,6 +346,7 @@ var genCoordinates = function(){
 }
                           
 var calculatePoints = function(){
+  hidePopupDiv();
   //remove all points
   location.hash = '#' + storePoints();
   listOfPoints = [];
@@ -414,7 +416,6 @@ var calculatePoints = function(){
 }
 
 var calculateHandler = function(){
-  hidePopupDiv();
   var newDefaultNumber = parseInt(defaultNumInput.value,10);
   if(newDefaultNumber > 18){
   	defaultNumber = 18;
@@ -707,7 +708,6 @@ window.addEventListener('hashchange', function(){
 })
 
 forwardButton.addEventListener('click', function(){
-	hidePopupDiv();
 	if(listOfBoards[boardIndex+1]){
 		boardIndex += 1;
 		pointCoordinates = listOfBoards[boardIndex];
@@ -719,7 +719,6 @@ forwardButton.addEventListener('click', function(){
 });
 
 backButton.addEventListener('click',function(){
-	hidePopupDiv();
 	if(listOfBoards[boardIndex-1]){
 		boardIndex -= 1;
 		pointCoordinates = listOfBoards[boardIndex];
