@@ -121,7 +121,9 @@ var circleEventHandler = function(index){
 				setTimeout(changeLine, (number-index+0.2)*animationTime/number, line);
 			});
 			
-			message.textContent = 'Congratulations, you found the best path in ' + Math.round(time) + ' seconds. To share this board, send the URL of this page.';
+			message.textContent = 'Congratulations, you found the best path in ' + Math.round(time) + ' second'
+			if(Math.round(time)!==1){message.textcontent+='s'}
+			message.textContnet += "To share this board, send this page's URL.';
 			setTimeout(function(){
 				//shareURL.textContent = window.location;
 				showPopupDiv();
@@ -143,7 +145,7 @@ var circleEventHandler = function(index){
 			storeBest();
 			bestBar.setAttribute('y', 424-barHeight());
 			bestBar.setAttribute('height', barHeight());
-			message.textContent = 'This is your shortest path yet, but the best one is ' + percentShorter.toPrecision(2) +'% shorter';
+			message.textContent = 'This is your shortest path yet, but the perfect one is ' + percentShorter.toPrecision(2) +'% shorter';
 			//shareURL.textContent = window.location;
 			showPopupDiv();
       	}
