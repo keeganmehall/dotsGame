@@ -16,8 +16,8 @@ var defaultNumber = 12;
 var number = defaultNumber;
 var pathLength = 0;
 var i = 0;
-var listOfLines;
-var listOfPoints;
+var listOfLines = [];
+var listOfPoints = [];
 var best;
 var perfectLength;
 var pointCoordinates = [];
@@ -349,13 +349,20 @@ var genCoordinates = function(){
 }
                           
 var calculatePoints = function(){
+  var cssTransforms = false;
+  lengthBar.style.transform = 'none';
+  if(lengthBar.style.transform === 'none'){cssTransforms = true}
   hidePopupDiv();
   //remove all points
+  listOfLines.forEach(function(line){
+  	svg.removeChild(line.svgElement);
+  })
+  listOfLines = []
   location.hash = '#' + storePoints();
-  listOfPoints = [];
-    while (svg.firstChild) {
+  //listOfPoints = [];
+    /*while (svg.firstChild) {
     svg.removeChild(svg.firstChild);
-	}
+	}*/
     i = 0
     //add new points
     while (i<number){
@@ -363,8 +370,7 @@ var calculatePoints = function(){
         var randomy = pointCoordinates[i].y;
   
         //create single dot
-        var circleSVG = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        var svgOverlay = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+
         if (i === 0){
         	var pointType =	'start';
           var pointState = 'start';
@@ -375,13 +381,33 @@ var calculatePoints = function(){
             var pointType = 'normal';
           	var pointState = 'unconnected';
         }
-            
+        
+        if(listOfPoints[i]){
+        	var circleSVG = listOfPoints[i].svgElement;
+        	var svgOverlay = listOfPoints[i].svgOverlay;
+        }else{
+		    var circleSVG = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		    var svgOverlay = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		}
         var circle = {svgOverlay:svgOverlay, svgElement:circleSVG, x:randomx, y:randomy, type:pointType, state:pointState}
-        listOfPoints.push(circle)
-        circleSVG.setAttribute('cx',randomx)//set circle x position
-        circleSVG.setAttribute('cy',randomy)//set circle y position
+        if(!listOfPoints[i]){
+        	listOfPoints.push(circle);
+        	circleSVG.style.opacity = 0;
+        }else{
+        	listOfPoints[i] = circle;
+        }
+       	if(cssTransforms){
+		    if(listOfPoints[i]){
+		    	circleSVG.setAttribute('cx',20)//set circle x position
+		    	circleSVG.setAttribute('cy',400)//set circle y position
+		    }
+		} else{
+			circleSVG.setAttribute('cx',randomx)//set circle x position
+		    circleSVG.setAttribute('cy',randomy)//set circle y position
+		}
         circleSVG.setAttribute('r',circleSize)      //set circle radius
         circleSVG.id = i;
+        circleSVG.style.transition = 'transform 0.3s, opacity 0.2s';
         svgOverlay.setAttribute('cx',randomx)//set circle x position
         svgOverlay.setAttribute('cy',randomy)//set circle y position
         svgOverlay.setAttribute('r', '25');      //set circle radius
@@ -398,6 +424,12 @@ var calculatePoints = function(){
         circleSVG.addEventListener('click',circleClickHandler);
         i++
     }
+    setTimeout(function(){
+		for(var i=0; i<number; i++){
+			listOfPoints[i].svgElement.style.transform = 'translate('+(pointCoordinates[i].x-20)+'px, '+(pointCoordinates[i].y-400)+'px)';
+			listOfPoints[i].svgElement.style.opacity = 1;
+		}
+	}, 10)
     i=0
     colorPoints()
     pathLength = 0;
@@ -582,7 +614,7 @@ var retrieve = function(string){
   		return false
   	}
   	if(listOfBoards[boardIndex-1] !== pointCoordinates && pointCoordinates === newPointCoordinates){
-  		listOfBoards.push(pointCoordinates);
+  		listOfBoards.splice(boardIndex, 0, pointCoordinates);
   		boardIndex +=1;
   	}
   	return true;	
