@@ -102,8 +102,8 @@ var circleEventHandler = function(index){
 		if(pathLength-perfectLength<0.01){
 			var animationTime = 300;
 			storeBest();
-			bestBar.setAttribute('y', 424-barHeight());
-			bestBar.setAttribute('height', barHeight());
+			bestBar.setAttribute('y', 424-barHeight(pathLength));
+			bestBar.setAttribute('height', barHeight(pathLength));
 			bestBar.setAttribute('fill','green');          
 			lengthBar.transiton = 'fill ' + animationTime/1000+'s';
 			lengthBar.setAttribute('fill','green');
@@ -134,18 +134,18 @@ var circleEventHandler = function(index){
 			point.svgElement.setAttribute('fill','green');
 			point.svgElement.setAttribute('r',largeCircleSize);
 			});*/
-		}else if(best && !isNaN(best) && pathLength - best > 0.01){
+		}else if(pointCoordinates[0].best && !isNaN(pointCoordinates[0].best) && pathLength - pointCoordinates[0].best > 0.01){
 			message.textContent = 'You finished, but you have done better. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
 			//shareURL.textContent = window.location;
 			showPopupDiv();
-		}else if(best && !isNaN(best) && Math.abs(pathLength-best) < 0.01){
+		}else if(pointCoordinates[0].best && !isNaN(pointCoordinates[0].best) && Math.abs(pathLength-pointCoordinates[0].best) < 0.01){
 			message.textContent = 'This is the same as your last best path. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
 			//shareURL.textContent = window.location;
 			showPopupDiv();
-		}else if(pathLength < best || isNaN(best) || !best){
+		}else if(pathLength < pointCoordinates[0].best || isNaN(pointCoordinates[0].best) || !pointCoordinates[0].best){
 			storeBest();
-			bestBar.setAttribute('y', 424-barHeight());
-			bestBar.setAttribute('height', barHeight());
+			bestBar.setAttribute('y', 424-barHeight(pathLength));
+			bestBar.setAttribute('height', barHeight(pathLength));
 			message.textContent = 'This is your shortest path yet, but the perfect one is ' + percentShorter.toPrecision(2) +'% shorter';
 			//shareURL.textContent = window.location;
 			showPopupDiv();
@@ -229,8 +229,8 @@ boardDiv.addEventListener("touchstart" , touchHandler, true);
 boardDiv.addEventListener("touchmove" , touchHandler, true);
 
 var storeBest = function (){
-  best = calcPathLength()
-  bestLengthString = Math.round(best).toString()
+  pointCoordinates[0].best = calcPathLength()
+  bestLengthString = Math.round(pointCoordinates[0].best).toString()
 }
 
 var calcPathLength = function(){
@@ -462,7 +462,7 @@ var calculateHandler = function(){
   number = defaultNumber;
   genCoordinates();
   calculatePoints();
-  best = ''
+  pointCoordinates[0].best = ''
 }
 
 defaultNumInput.addEventListener('keypress', function(event){
@@ -719,15 +719,15 @@ var calcBestPath = function(){
   return perfectLength;
 }
 
-var barHeight = function(){
-	var height = 6+(pathLength*412/(1.5*perfectLength));
+var barHeight = function(length){
+	var height = 6+(length*412/(1.5*perfectLength));
   if (height > 418){
   	return 418;
   }else{return height}
 }
 var updateLengthBars = function(){
-  lengthBar.setAttribute('y',424-barHeight());
-  lengthBar.setAttribute('height', barHeight());
+  lengthBar.setAttribute('y',424-barHeight(pathLength));
+  lengthBar.setAttribute('height', barHeight(pathLength));
 }
 
 window.addEventListener('hashchange', function(){
@@ -747,8 +747,15 @@ forwardButton.addEventListener('click', function(){
 		pointCoordinates = listOfBoards[boardIndex];
 		number = pointCoordinates.length;
 		calculatePoints();
+		bestBar.setAttribute('height', barHeight(pointCoordinates[0].best));
+		console.log(pointCoordinates[0].best);
+		bestBar.setAttribute('y', 424-barHeight(pointCoordinates[0].best));
+		if(pointCoordinates[0].best - perfectLength < 0.01){
+			bestBar.setAttribute('fill', 'green');
+		}
 	}else{
 		calculateHandler();
+		pointCoordinates[0].best = ''
 	}
 });
 
@@ -758,6 +765,13 @@ backButton.addEventListener('click',function(){
 		pointCoordinates = listOfBoards[boardIndex];
 		number = pointCoordinates.length;
 		calculatePoints();
+		console.log(pointCoordinates[0].best);
+		console.log(barHeight(pointCoordinates[0].best));
+		bestBar.setAttribute('height', barHeight(pointCoordinates[0].best));
+		bestBar.setAttribute('y', 424-barHeight(pointCoordinates[0].best));
+		if(pointCoordinates[0].best - perfectLength < 0.01){
+			bestBar.setAttribute('fill', 'green');
+		}
 	}
 })
 
