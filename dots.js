@@ -750,7 +750,7 @@ forwardButton.addEventListener('click', function(){
 		bestBar.setAttribute('height', barHeight(pointCoordinates[0].best));
 		console.log(pointCoordinates[0].best);
 		bestBar.setAttribute('y', 424-barHeight(pointCoordinates[0].best));
-		if(pointCoordinates[0].best - perfectLength < 0.01 && !isNan(pointCoordinates[0].best)){
+		if(pointCoordinates[0].best - perfectLength < 0.01 && !isNaN(pointCoordinates[0].best)){
 			bestBar.setAttribute('fill', 'green');
 		}
 	}else{
@@ -769,7 +769,7 @@ backButton.addEventListener('click',function(){
 		console.log(barHeight(pointCoordinates[0].best));
 		bestBar.setAttribute('height', barHeight(pointCoordinates[0].best));
 		bestBar.setAttribute('y', 424-barHeight(pointCoordinates[0].best));
-		if(pointCoordinates[0].best - perfectLength < 0.01){
+		if(pointCoordinates[0].best - perfectLength < 0.01 && !isNaN(pointCoordinates[0].best)){
 			bestBar.setAttribute('fill', 'green');
 		}
 	}
