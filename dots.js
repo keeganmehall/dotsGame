@@ -408,6 +408,7 @@ var calculatePoints = function(){
         circleSVG.setAttribute('r',circleSize)      //set circle radius
         circleSVG.id = i;
         circleSVG.style.transition = 'transform 0.3s, opacity 0.2s';
+        circleSVG.style.transitionTimingFunction = 'cubic-bezier(0.42, 0, 0.58, 1.2)';
         svgOverlay.setAttribute('cx',randomx)//set circle x position
         svgOverlay.setAttribute('cy',randomy)//set circle y position
         svgOverlay.setAttribute('r', '25');      //set circle radius
