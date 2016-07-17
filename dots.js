@@ -135,18 +135,18 @@ var circleEventHandler = function(index){
 			point.svgElement.setAttribute('r',largeCircleSize);
 			});*/
 		}else if(pointCoordinates[0].best && !isNaN(pointCoordinates[0].best) && pathLength - pointCoordinates[0].best > 0.01){
-			message.textContent = 'You finished, but you have done better. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
+			message.textContent = 'You finished, but you have done better. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter.';
 			//shareURL.textContent = window.location;
 			showPopupDiv();
 		}else if(pointCoordinates[0].best && !isNaN(pointCoordinates[0].best) && Math.abs(pathLength-pointCoordinates[0].best) < 0.01){
-			message.textContent = 'This is the same as your last best path. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter';
+			message.textContent = 'This is the same as your last best path. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter.';
 			//shareURL.textContent = window.location;
 			showPopupDiv();
 		}else if(pathLength < pointCoordinates[0].best || isNaN(pointCoordinates[0].best) || !pointCoordinates[0].best){
 			storeBest();
 			bestBar.setAttribute('y', 424-barHeight(pathLength));
 			bestBar.setAttribute('height', barHeight(pathLength));
-			message.textContent = 'This is your shortest path yet, but the perfect one is ' + percentShorter.toPrecision(2) +'% shorter';
+			message.textContent = 'This is your shortest path yet, but the perfect one is ' + percentShorter.toPrecision(2) +'% shorter.';
 			//shareURL.textContent = window.location;
 			showPopupDiv();
       	}
