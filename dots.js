@@ -365,6 +365,12 @@ var calculatePoints = function(){
 	}*/
     i = 0
     //add new points
+    while(listOfPoints.length > number){
+    	svg.removeChild(listOfPoints[listOfPoints.length-1].svgElement);
+    	svg.removeChild(listOfPoints[listOfPoints.length-1].svgOverlay);
+    	listOfPoints.pop();
+    }
+    
     while (i<number){
   			var randomx = pointCoordinates[i].x;
         var randomy = pointCoordinates[i].y;
