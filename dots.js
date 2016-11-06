@@ -148,7 +148,7 @@ var circleEventHandler = function(index){
 			var newMessage = "<h2>You've done better</h2> <p>You finished, but you have done better. The perfect path is " + percentShorter.toPrecision(2) +"% shorter.</p>";
 			showPopupDiv(newMessage);
 		}else if(pointCoordinates[0].best && !isNaN(pointCoordinates[0].best) && Math.abs(pathLength-pointCoordinates[0].best) < 0.01){
-			var newMessage = "<h2>You've done this path before</h2> <p>This is the same as your last best path. The perfect path is " + percentShorter.toPrecision(2) +"% shorter</p>";
+			var newMessage = "<h2>You've tried this path before.</h2> <p>The perfect path is " + percentShorter.toPrecision(2) +"% shorter.</p>";
 			//shareURL.textContent = window.location;
 			showPopupDiv(newMessage);
 		}else if(pathLength < pointCoordinates[0].best || isNaN(pointCoordinates[0].best) || !pointCoordinates[0].best){
@@ -159,7 +159,7 @@ var circleEventHandler = function(index){
 			
 			if(!(localStorage.dots_shownFinishedMessage === 'true')){
 				localStorage.dots_shownFinishedMessage = true;
-				newMessage += "<p>To restart, use the circular arrow. Your current length will stay as a light blue bar. To calculate a new board, use the right arrow. To return to this board later, use the left arrow or return to this page's URL.<p>"
+				newMessage += "<p>Use the circular arrow to try again. Your current length will stay as a light blue bar. To go to a new board, use the right arrow. To return to this board later, use the left arrow or return to this page's URL.<p>"
 			}
 			
 			//shareURL.textContent = window.location;
@@ -915,7 +915,7 @@ var showGameIntro = function(){
 var showLengthIntro = function(){
 	localStorage.dots_shownLengthIntro = true;
 	showPopupDiv(
-		"<h2>Welcome</h2> The blue bar on the right shows the current length relative the the length of the shortest possible path, shown by the green line. You can undo using the curved back arrow below, or restart using the the circular arrow."
+		"<h2>Welcome</h2> The blue bar on the right shows the current length relative to the shortest possible path. You can undo using the curved back arrow below, or restart using the the circular arrow."
 	, true);
 }
 
