@@ -195,7 +195,9 @@ var showPopupDiv = function(text){
 	setTimeout(function(){popupDiv.style.opacity = 1},5);
 	
 	document.addEventListener("mousedown", hidePopupDiv)
-	document.addEventListener("touchstart", hidePopupDiv);
+	setTimeout(function(){
+		document.addEventListener("touchstart", hidePopupDiv);
+	}, 500);
 	svg.blurred = true;
 }
 var hidePopupDiv = function(){
