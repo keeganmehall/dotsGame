@@ -8,17 +8,19 @@
 	<div width ="470" height="430" id='boardDiv'>
 		<svg id='svg' width="430", height="430"></svg>
 		<svg id="lengthBarSVG" width="30", height="430" x="440">
-		  <rect id = "lengthBarsBackground" width="30" height="430" rx='9' fill='#b0b0b0'></rect>
-		  <rect id="bestBar" width="18" x="6" rx="3"></rect>
-		  <rect id="lengthBar" x="6" y="414" height="10" width="18" fill="blue" rx="3"></rect>
-		  <rect id="optimalBar" width="26" x="2" height="3" rx="2.5" y="143.33333333333" fill="green"></rect>
+			<rect id = "lengthBarsBackground" width="30" height="430" rx='9' fill='#b0b0b0'></rect>
+			<rect id="bestBar" width="18" x="6" rx="3"></rect>
+			<rect id="lengthBar" x="6" y="414" height="10" width="18" fill="blue" rx="3"></rect>
+			<rect id="optimalBar" width="26" x="2" height="3" rx="2.5" y="143.33333333333" fill="green"></rect>
 		</svg>
-		<div id="popupDiv">
-			<div>
-				<span id="message"></span>
-			</div>
-			<div>			
-				<span id="URL"></span>
+		<div id='popupDiv'>
+			<svg id='closebutton'>
+					<circle cx="10" cy="10" r="10" opacity="1" fill="red"></circle>
+					<line x1='6' y1='6' x2='14' y2='14' stroke-width='2' stroke='black'></line>
+					<line x1='14' y1='6' x2='6' y2='14' stroke-width='2' stroke='black'></line>
+			</svg>
+			<div id='popupDiv-content'>
+			
 			</div>
 		</div>
 	</div>
@@ -28,5 +30,8 @@
 		<img id='reset' src='resetButton.svg' height='40'></img>
 		<img id='undo' src='undoButton.svg' height='40'></img>
 		<img id="forwardButton" src='forwardArrow.svg' height='40'></img>
+	</div>
+	<div>
+		<button type:"button" id='showDirections'>Show Directions</button>
 	</div>
 </body>

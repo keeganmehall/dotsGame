@@ -17,25 +17,38 @@
 	
 }
 #popupDiv{
-	padding-top:50px;
-	padding-left:10px:
-	padding-right:10px;
-	padding-bottom:50px;
+	margin-top:50px;
+	margin-left:50px:
+	padding-left:50px;
+	margin-right:80px;
+	width:340;
 	display:none;
-	top:0;
-	left:0;
-	width:430px;
-	height:330px;
+	top:50;
+	left:40;
 	position:absolute;
-	background-color:rgba(255,255,255,0);
-	text-align:center;
-	vertical-align:middle;
+	background-color:rgba(200,200,200,0.5);
+	border: 3px solid black;
+	border-radius: 5px;
+	text-align: center;
+	horizontal-align:middle;
 	white-space:normal;
 	opacity: 0;
 	transition: opacity 0.4s;
 	-webkit-transition: opacity 0.4s;
 }
 
+#popupDiv-content{
+	padding:10px;
+	text-align:left;
+}
+
+#closebutton{
+	position:absolute;
+	top:-10;
+	left:-10;
+	width:20;
+	height:20;
+}
 
 
 /*#svg{
@@ -53,13 +66,24 @@
 	-webkit-transition: fill 0.3s;
 }
 
+h2{
+	font-size:18px;
+	margin-top: 0px;
+	text-align:center;
+	color:black
+}
 
+button{
+	height:30px;
+	font-size:16px;
+	margin:3px;
+}
 
 
 @keyframes blur{
 	from{
-		filter:blur(1.5px);
-		-webkit-filter:blur(1.5px);
+		filter:blur(1px);
+		-webkit-filter:blur(1px);
 		opacity:0.5;
 	}
 	to{
