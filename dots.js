@@ -11,7 +11,6 @@ var bestBar = document.getElementById('bestBar');
 var backButton = document.getElementById('backButton');
 var shareURL = document.getElementById('URL');
 var popupDiv = document.getElementById('popupDiv');
-var message = document.getElementById('message');
 var defaultNumber = 12;
 var number = defaultNumber;
 var pathLength = 0;
@@ -30,6 +29,7 @@ var lineWidth = 2;
 var mobile = false;
 var scale = 1;
 var startTime;
+
 
 if(/mobi|android|touch|mini/i.test(navigator.userAgent.toLowerCase())){
 	mobile = true;
@@ -52,10 +52,10 @@ if(mobile){
 var circleClickHandler = function(){
 	circleEventHandler(this.id);
 }    
-//this function describes what should happen when the user clicks on a circle
+//controls behavior when a circle is clicked or when a touch event is closest to the circle
 var circleEventHandler = function(index){
     //get clicked circle position 
-    //(the event handler is attached to the circle element so 'this' references the circle element)
+  
 
   if(listOfPoints[index].state === 'unconnected'){
       pointDescriptor = listOfPoints[index]
@@ -123,11 +123,16 @@ var circleEventHandler = function(index){
 			
 			var newMessage = 'Congratulations, you found the best path in ' + Math.round(time) + ' second'
 			if(Math.round(time)!==1){newMessage+='s'}
+			
+			if(!localStorage.dots_shownCongratulationsMessage){
+				localStorage.dots_shownCongratulationsMessage = true;
+				newMessage += ". Use the right arrow to calculate a new board, or use the left arrow to return to a previous board"
+			}
+			
 			newMessage += ". To share this board, send this page's URL.";
-			message.textContent = newMessage;
 			setTimeout(function(){
 				//shareURL.textContent = window.location;
-				showPopupDiv();
+				showPopupDiv(newMessage, true);
 			}, animationTime/2);
 
 			/*listOfPoints.forEach(function(point){
@@ -135,48 +140,63 @@ var circleEventHandler = function(index){
 			point.svgElement.setAttribute('r',largeCircleSize);
 			});*/
 		}else if(pointCoordinates[0].best && !isNaN(pointCoordinates[0].best) && pathLength - pointCoordinates[0].best > 0.01){
-			message.textContent = 'You finished, but you have done better. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter.';
+			var newMessage = 'You finished, but you have done better. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter.';
 			//shareURL.textContent = window.location;
-			showPopupDiv();
+			showPopupDiv(newMessage);
 		}else if(pointCoordinates[0].best && !isNaN(pointCoordinates[0].best) && Math.abs(pathLength-pointCoordinates[0].best) < 0.01){
-			message.textContent = 'This is the same as your last best path. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter.';
+			var newMessage = 'This is the same as your last best path. The perfect path is ' + percentShorter.toPrecision(2) +'% shorter.';
 			//shareURL.textContent = window.location;
-			showPopupDiv();
+			showPopupDiv(newMessage);
 		}else if(pathLength < pointCoordinates[0].best || isNaN(pointCoordinates[0].best) || !pointCoordinates[0].best){
 			storeBest();
 			bestBar.setAttribute('y', 424-barHeight(pathLength));
 			bestBar.setAttribute('height', barHeight(pathLength));
-			message.textContent = 'This is your shortest path yet, but the perfect one is ' + percentShorter.toPrecision(2) +'% shorter.';
+			var newMessage = 'This is your shortest path yet, but the perfect one is ' + percentShorter.toPrecision(2) +'% shorter.';
+			
+			if(!localStorage.dots_shownFinishedMessage){
+				localStorage.dots_shownFinishedMessage = true;
+				newMessage += " To restart, use the circular arrow. Your current length will stay as a light blue bar. To calculate a new board, use the right arrow. To return to this board later, use the left arrow or return to this page's url."
+			}
+			
 			//shareURL.textContent = window.location;
-			showPopupDiv();
+			showPopupDiv(newMessage);
       	}
 		
       
     }
   }
   updateLengthBars();
+  if(!localStorage.dots_shownLengthIntro){
+  	showLengthIntro();
+  }
 }
 
 var svgElementFilters = function(){
 	var lengthBarsBackground = document.getElementById('lengthBarsBackground');
 	lengthBarsBackground.style.filter='opacity(0.99%)';
 	lengthBarsBackground.setAttribute('style', '-webkit-filter:opacity(0.99%)');
-	console.log(lengthBarsBackground.style);
+	//console.log(lengthBarsBackground.style);
 }
 
-var showPopupDiv = function(){
+var showPopupDiv = function(text){
+	var message = document.getElementById('message');
+	message.textContent = text;
 	setTimeout(function(){svg.style.animationPlayState = 'paused'},1000);
 	svg.style.animationPlayState = 'running';
 	svg.style.animationDirection = 'reverse';
 	svg.style.animationFillMode = 'both';
 	svg.style.animationName = 'blur';
 	svg.style.animationDuration = '0.4s';
-	svg.blurred = true;
+	
 	//if(svg.style.filter !== 'blur(1.5px) opacity(50%)' && svg.style.webkitFilter !== 'blur(1.5px) opacity(50%)'){
 	//	popupDiv.style.backgroundColor = 'rgba(255,255,255,0.8)';
 	//}
 	popupDiv.style.display = 'block';
 	setTimeout(function(){popupDiv.style.opacity = 1},5);
+	
+	document.addEventListener("mousedown", hidePopupDiv)
+	document.addEventListener("touchstart", hidePopupDiv);
+	svg.blurred = true;
 }
 var hidePopupDiv = function(){
 	svg.style.animationPlayState = 'paused';
@@ -188,6 +208,8 @@ var hidePopupDiv = function(){
 	popupDiv.style.opacity = 0;
 	setTimeout(function(){popupDiv.style.display = 'none'}, 400);
 	svg.blurred = false;
+	document.removeEventListener("mousedown", hidePopupDiv);
+	document.removeEventListener("touchstart", hidePopupDiv);
 }
 
 var oldCoordinates;
@@ -218,7 +240,7 @@ var touchHandler = function(evt){
 		}
 		var currentTime = new Date();
 		
-		var speedSquared = (Math.pow(x-oldCoordinates[0],2)+Math.pow(y-oldCoordinates[1],2))/(Math.pow(currentTime - timeOfLastTouchMove, 2));
+		//var speedSquared = (Math.pow(x-oldCoordinates[0],2)+Math.pow(y-oldCoordinates[1],2))/(Math.pow(currentTime - timeOfLastTouchMove, 2));
 		
 		timeOfLastTouchMove = currentTime;
 		oldCoordinates = [x,y];
@@ -227,6 +249,7 @@ var touchHandler = function(evt){
 
 boardDiv.addEventListener("touchstart" , touchHandler, true);
 boardDiv.addEventListener("touchmove" , touchHandler, true);
+
 
 var storeBest = function (){
   pointCoordinates[0].best = calcPathLength()
@@ -243,7 +266,6 @@ var calcPathLength = function(){
 }
 
 resetButton.addEventListener('click',function(){
-    hidePopupDiv();
     lengthBar.setAttribute('fill', 'blue');
     listOfLines.forEach(function(line){
         svg.removeChild(line.svgElement)
@@ -270,7 +292,6 @@ var length = function(line){
 }
 
 undoButton.addEventListener('click',function(){
-    hidePopupDiv();
     lengthBar.setAttribute('fill', 'blue');
     if (listOfLines.length > 1){
         var lineDescriptor = listOfLines[listOfLines.length-1]
@@ -352,7 +373,6 @@ var calculatePoints = function(){
   var cssTransforms = false;
   lengthBar.style.transform = 'none';
   if(lengthBar.style.transform === 'none'){cssTransforms = true}
-  hidePopupDiv();
   //remove all points
   listOfLines.forEach(function(line){
   	svg.removeChild(line.svgElement);
@@ -450,9 +470,10 @@ var calculatePoints = function(){
   lengthBar.setAttribute('fill','blue');
 	
 	
-	if(number < 14){console.log(difficulty(perfectLength*1.1), 'paths within 10%')};	
-	console.log('total angle:', pathAngles(), 'radians');
-	console.log('perfectLength', perfectLength);
+	//if(number < 14){
+	//console.log(difficulty(perfectLength*1.1), 'paths within 10%')};	
+	//console.log('total angle:', pathAngles(), 'radians');
+	//console.log('perfectLength', perfectLength);
 	
 }
 
@@ -720,7 +741,7 @@ var calcBestPath = function(){
 	}
   bestPath.push(1);
   
-  console.log(('Calculated in ', endTime-startTime)/1000, ' seconds');
+  //console.log(('Calculated in ', endTime-startTime)/1000, ' seconds');
   //console.log('optimalLength ran', functionCounter, 'times');
   //console.log((endTime-startTime)/(1000*functionCounter),'s per run');
   return perfectLength;
@@ -755,7 +776,7 @@ forwardButton.addEventListener('click', function(){
 		number = pointCoordinates.length;
 		calculatePoints();
 		bestBar.setAttribute('height', barHeight(pointCoordinates[0].best));
-		console.log(pointCoordinates[0].best);
+		//console.log(pointCoordinates[0].best);
 		bestBar.setAttribute('y', 424-barHeight(pointCoordinates[0].best));
 		if(pointCoordinates[0].best - perfectLength < 0.01 && !isNaN(pointCoordinates[0].best)){
 			bestBar.setAttribute('fill', 'green');
@@ -772,8 +793,8 @@ backButton.addEventListener('click',function(){
 		pointCoordinates = listOfBoards[boardIndex];
 		number = pointCoordinates.length;
 		calculatePoints();
-		console.log(pointCoordinates[0].best);
-		console.log(barHeight(pointCoordinates[0].best));
+		//console.log(pointCoordinates[0].best);
+		//console.log(barHeight(pointCoordinates[0].best));
 		bestBar.setAttribute('height', barHeight(pointCoordinates[0].best));
 		bestBar.setAttribute('y', 424-barHeight(pointCoordinates[0].best));
 		if(pointCoordinates[0].best - perfectLength < 0.01 && !isNaN(pointCoordinates[0].best)){
@@ -849,10 +870,27 @@ var difficulty = function(threshold){
 	}
 	var startTime = +new Date()
 	recursive(startIndex,middlePoints,0);
-	console.log((+new Date())-startTime);
+	//console.log((+new Date())-startTime);
 	return paths;
 }
 
+var showGameIntro = function(){
+	if(mobile){
+		var description = 'Drag your finger over the dots to select your path.';
+	} else{
+		var description = 'Click the dots to select your path.';
+	}
+	var introMessage = "Find the shortest path from the green dot to the red dot through all other dots. " + description;
+	showPopupDiv(introMessage);
+	localStorage.dots_shownGameIntro = true;
+}
+
+var showLengthIntro = function(){
+	localStorage.dots_shownLengthIntro = true;
+	showPopupDiv(
+		"The blue bar on the right shows the current length relative the the length of the shortest possible path, shown by the green line. You can undo using the curved back arrow below, or restart using the the circular arrow."
+	);
+}
 
 if(mobile){setScale()}
 
@@ -870,6 +908,9 @@ window.location.hash = '#' + storePoints();
 var functionCounter = 0;
 var baseCaseCounter = 0;
 calculatePoints();
+if(!localStorage.dots_shownGameIntro){
+	showGameIntro();
+}
 
 
 }
