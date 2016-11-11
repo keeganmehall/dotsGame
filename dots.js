@@ -698,8 +698,13 @@ var calcBestPath = function(){
   var startIndex = 0;
   var endIndex = 1;
   var middlePoints = (1<<(number-2))-1;
-  var memo = new Float32Array((1<<(number-2)) * number).fill(-1);
-  var pathList = new Uint32Array((1<<(number-2)) * number*2).fill(-1);
+  var memo = new Float32Array((1<<(number-2)) * number);
+  var pathList = new Uint32Array((1<<(number-2)) * number*2);
+  for(var i=0; i<(1<<(number-2)) * number; i++){
+  	memo[i] = -1;
+  	pathList[2*i] = -1;
+  	pathList[2*i+1] = -1;
+  }
   var optimalLength = function(startIndex,endIndex,middlePoints){
   	//functionCounter++;
     if(middlePoints === 0){
