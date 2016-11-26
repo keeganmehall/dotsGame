@@ -31,7 +31,7 @@ var lineWidth = 2;
 var mobile = false;
 var scale = 1;
 var startTime;
-
+var cssTransforms = true;
 
 if(/mobi|android|touch|mini/i.test(navigator.userAgent.toLowerCase())){
 	mobile = true;
@@ -39,6 +39,10 @@ if(/mobi|android|touch|mini/i.test(navigator.userAgent.toLowerCase())){
 	document.body.style.overflow = 'hidden';
 	circleSize = 15;
 	lineWidth = 3;
+}
+
+if(/Edge|Trident/i.test(navigator.userAgent)){
+	cssTransforms = false;
 }
 
 var setScale = function(){
@@ -173,13 +177,6 @@ var circleEventHandler = function(index){
   if(!(localStorage.dots_shownLengthIntro === 'true')){
   	showLengthIntro();
   }
-}
-
-var svgElementFilters = function(){
-	var lengthBarsBackground = document.getElementById('lengthBarsBackground');
-	lengthBarsBackground.style.filter='opacity(0.99%)';
-	lengthBarsBackground.setAttribute('style', '-webkit-filter:opacity(0.99%)');
-	//console.log(lengthBarsBackground.style);
 }
 
 var showPopupDiv = function(text, dismissButtons){
@@ -396,9 +393,8 @@ var genCoordinates = function(){
 }
                           
 var calculatePoints = function(){
-  var cssTransforms = false;
   lengthBar.style.transform = 'none';
-  if(lengthBar.style.transform === 'none'){cssTransforms = true}
+  if(lengthBar.style.transform !== 'none'){cssTransforms = false}
   //remove all points
   listOfLines.forEach(function(line){
   	svg.removeChild(line.svgElement);
@@ -444,7 +440,6 @@ var calculatePoints = function(){
         var circle = {svgOverlay:svgOverlay, svgElement:circleSVG, x:randomx, y:randomy, type:pointType, state:pointState}
         if(!listOfPoints[i]){
         	listOfPoints.push(circle);
-        	circleSVG.style.opacity = 0;
         }else{
         	listOfPoints[i] = circle;
         }
@@ -477,12 +472,13 @@ var calculatePoints = function(){
         circleSVG.addEventListener('click',circleClickHandler);
         i++
     }
-    setTimeout(function(){
-		for(var i=0; i<number; i++){
-			listOfPoints[i].svgElement.style.transform = 'translate('+(pointCoordinates[i].x-20)+'px, '+(pointCoordinates[i].y-400)+'px)';
-			listOfPoints[i].svgElement.style.opacity = 1;
-		}
-	}, 10)
+	if(cssTransforms){
+		setTimeout(function(){
+			for(var i=0; i<number; i++){			
+				listOfPoints[i].svgElement.style.transform = 'translate('+(pointCoordinates[i].x-20)+'px, '+(pointCoordinates[i].y-400)+'px)';
+			}
+		}, 10);
+	}
     i=0
     colorPoints()
     pathLength = 0;
