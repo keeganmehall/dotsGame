@@ -47,7 +47,7 @@ if(/Edge|Trident/i.test(navigator.userAgent)){
 }
 
 var setScale = function(){
-	scale = Math.min(window.innerHeight/480 , window.innerWidth/480);
+	scale = Math.min(window.innerHeight/535 , window.innerWidth/480);
 	document.body.style.transform = 'scale(' + scale + ')';
 	document.body.style.webkittransform = 'scale(' + scale + ')';
 	document.body.style.transformOrigin = '0 0';
