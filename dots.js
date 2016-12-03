@@ -32,6 +32,7 @@ var mobile = false;
 var scale = 1;
 var startTime;
 var cssTransforms = true;
+var popupVisible = false;
 
 if(/mobi|android|touch|mini/i.test(navigator.userAgent.toLowerCase())){
 	mobile = true;
@@ -55,13 +56,13 @@ var setScale = function(){
 if(mobile){
 	window.addEventListener("resize", setScale)
 }
-var circleClickHandler = function(){
-	circleEventHandler(this.id);
-}    
+
 //controls behavior when a circle is clicked or when a touch event is closest to the circle
 var circleEventHandler = function(index){
-    hidePopupDiv();
-  
+	if(popupVisible){
+		hidePopupDiv();
+		return;
+	}
 
   if(listOfPoints[index].state === 'unconnected'){
       pointDescriptor = listOfPoints[index]
@@ -180,6 +181,7 @@ var circleEventHandler = function(index){
 }
 
 var showPopupDiv = function(text, dismissButtons){
+	popupVisible = true;	
 	var buttons = '';
 	if(dismissButtons === true){
 		buttons = "<div><button type='button' id='continue'>Continue</button><button type='button' id='skip'>Skip Directions</button></div>"
@@ -220,6 +222,7 @@ var showPopupDiv = function(text, dismissButtons){
 	svg.blurred = true;
 }
 var hidePopupDiv = function(){
+	popupVisible = false;
 	svg.style.animationPlayState = 'paused';
 	svg.style.animation = '';
 	svg.style.filter = 'none';
@@ -273,6 +276,51 @@ var touchHandler = function(evt){
 boardDiv.addEventListener("touchstart" , touchHandler, true);
 boardDiv.addEventListener("touchmove" , touchHandler, true);
 
+var clickHandler = function(evt){
+	evt.preventDefault();
+	var x = (evt.clientX-svg.getBoundingClientRect().left)/scale;
+	var y = (evt.clientY-svg.getBoundingClientRect().top)/scale;
+	if(0<x && x<430 && 0<y && y<430){
+		var closestIndex;
+		var closestLength = Infinity;
+		var distance = function(idx){
+			return Math.pow(x-pointCoordinates[idx].x,2) + Math.pow(y-pointCoordinates[idx].y,2);
+		}
+		for(var i=0; i<number; i++){
+			var dist = distance(i);
+			if(dist < closestLength && dist < 2500 && listOfPoints[i].state === 'unconnected'){
+				closestLength = dist;
+				closestIndex = i;
+			}
+		}
+		if(closestIndex){
+			circleEventHandler(closestIndex);
+		}
+	}
+}
+
+var mouseMoveHandler = function(evt){
+	if(evt.buttons){
+		clickHandler(evt);
+	}else{
+		boardDiv.removeEventListener("mousemove" , mouseMoveHandler);
+	}
+}
+
+boardDiv.addEventListener("mousedown" , function(evt){
+	evt.preventDefault();
+	clickHandler(evt);
+	boardDiv.addEventListener("mousemove" , mouseMoveHandler);
+});
+boardDiv.addEventListener("mouseup" , function(evt){
+	boardDiv.removeEventListener("mousemove" , mouseMoveHandler);
+});
+boardDiv.addEventListener("mouseleave", function(){
+	boardDiv.removeEventListener("mousemove" , mouseMoveHandler);
+})
+boardDiv.addEventListener("mousemove", function(evt){
+	evt.preventDefault();
+})
 
 var storeBest = function (){
   pointCoordinates[0].best = calcPathLength()
@@ -409,7 +457,6 @@ var calculatePoints = function(){
     //add new points
     while(listOfPoints.length > number){
     	svg.removeChild(listOfPoints[listOfPoints.length-1].svgElement);
-    	svg.removeChild(listOfPoints[listOfPoints.length-1].svgOverlay);
     	listOfPoints.pop();
     }
     
@@ -432,12 +479,10 @@ var calculatePoints = function(){
         
         if(listOfPoints[i]){
         	var circleSVG = listOfPoints[i].svgElement;
-        	var svgOverlay = listOfPoints[i].svgOverlay;
         }else{
 		    var circleSVG = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		    var svgOverlay = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		}
-        var circle = {svgOverlay:svgOverlay, svgElement:circleSVG, x:randomx, y:randomy, type:pointType, state:pointState}
+        var circle = {svgElement:circleSVG, x:randomx, y:randomy, type:pointType, state:pointState}
         if(!listOfPoints[i]){
         	listOfPoints.push(circle);
         }else{
@@ -452,24 +497,14 @@ var calculatePoints = function(){
 			circleSVG.setAttribute('cx',randomx)//set circle x position
 		    circleSVG.setAttribute('cy',randomy)//set circle y position
 		}
-        circleSVG.setAttribute('r',circleSize)      //set circle radius
+        circleSVG.setAttribute('r',circleSize)
+        
         circleSVG.id = i;
         circleSVG.style.transition = 'transform 0.3s, opacity 0.2s';
         circleSVG.style.transitionTimingFunction = 'cubic-bezier(0.42, 0, 0.58, 1.2)';
-        svgOverlay.setAttribute('cx',randomx)//set circle x position
-        svgOverlay.setAttribute('cy',randomy)//set circle y position
-        svgOverlay.setAttribute('r', '25');      //set circle radius
-        svgOverlay.setAttribute('opacity', '0');
-        svgOverlay.id = i;
         
-        //add circle to svg image which is the svg tag in the html box
         svg.appendChild(circleSVG);
-        svg.appendChild(svgOverlay);
         
-        
-        //make it so that the functon circleClickHandler rund when a circle is clicked
-        svgOverlay.addEventListener('click',circleClickHandler);
-        circleSVG.addEventListener('click',circleClickHandler);
         i++
     }
 	if(cssTransforms){
